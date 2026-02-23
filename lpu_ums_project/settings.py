@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'resource_management',
     'remedial_classes',
     'exams',
+    'results',
 ]
 
 AUTH_USER_MODEL = 'core.User'

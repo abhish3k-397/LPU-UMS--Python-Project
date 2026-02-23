@@ -52,15 +52,83 @@ def dashboard_view(request):
         context['pending_edits'] = AttendanceEditRequest.objects.filter(status='PENDING').count()
         context['pending_remedials'] = RemedialSession.objects.filter(status='PENDING').count()
     elif request.user.role == 'FACULTY':
-        from attendance.models import Course
-        context['courses'] = Course.objects.filter(faculty=request.user)
+        from attendance.models import Course, AttendanceSession, AttendanceEditRequest, TimetableSlot
+        from django.utils import timezone
+        import datetime
+        
+        now = timezone.now()
+        today = now.date()
+        
+        # Determine current slot
+        # Slot 1: 9-10, Slot 2: 10-11, ..., Slot 7: 15-16
+        current_hour = now.hour
+        current_slot_num = None
+        if 9 <= current_hour < 16:
+            current_slot_num = current_hour - 8
+        
+        # Determine current day (0=Mon, 4=Fri)
+        days_map = {0: 'MON', 1: 'TUE', 2: 'WED', 3: 'THU', 4: 'FRI'}
+        current_day_code = days_map.get(now.weekday())
+        
+        active_slots = []
+        if current_day_code and current_slot_num:
+            # Find timetable slots for this faculty right now
+            faculty_slots = TimetableSlot.objects.filter(
+                course__faculty=request.user,
+                day_of_week=current_day_code,
+                slot_number=current_slot_num
+            )
+            
+            for slot in faculty_slots:
+                # Check if session already exists for this slot today
+                session_exists = AttendanceSession.objects.filter(
+                    slot=slot,
+                    date=today
+                ).exists()
+                
+                if not session_exists:
+                    active_slots.append(slot)
+        
+        context['active_slots'] = active_slots
+        
+        assigned_courses = Course.objects.filter(faculty=request.user)
+        context['total_students'] = assigned_courses.values('students').distinct().count()
+        context['total_courses_count'] = assigned_courses.count()
+        
+        context['active_sessions_today'] = AttendanceSession.objects.filter(
+            course__faculty=request.user, 
+            date=today
+        ).count()
+        
+        context['pending_edits_count'] = AttendanceEditRequest.objects.filter(
+            session__course__faculty=request.user,
+            status='PENDING'
+        ).count()
     elif request.user.role == 'STUDENT':
         from attendance.models import Course, AttendanceRecord
         from remedial_classes.models import RemedialAttendance
+        from results.models import SemesterResult
         
         courses = Course.objects.filter(students=request.user)
-        context['enrolled_courses'] = courses
-        context['total_sessions'] = AttendanceRecord.objects.filter(student=request.user, is_present=True).count()
+        context['enrolled_courses_count'] = courses.count()
+        
+        # Calculate overall attendance percentage
+        total_records = AttendanceRecord.objects.filter(student=request.user).count()
+        if total_records > 0:
+            present_records = AttendanceRecord.objects.filter(student=request.user, is_present=True).count()
+            context['overall_attendance'] = round((present_records / total_records) * 100, 1)
+        else:
+            context['overall_attendance'] = "0.0"
+            
+        # Get latest academic metrics from results
+        latest_result = SemesterResult.objects.filter(student=request.user).order_by('-semester').first()
+        if latest_result:
+            context['latest_sgpa'] = latest_result.sgpa
+            context['credits_progress'] = f"{latest_result.credits_earned}/{latest_result.total_credits}"
+        else:
+            context['latest_sgpa'] = "0.0"
+            context['credits_progress'] = "0/0"
+            
         context['remedial_attended'] = RemedialAttendance.objects.filter(student=request.user).count()
     
     return render(request, 'core/dashboard.html', context)

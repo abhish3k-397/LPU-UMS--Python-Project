@@ -27,6 +27,7 @@ urlpatterns = [
     path('resources/', include('resource_management.urls')),
     path('remedial/', include('remedial_classes.urls')),
     path('exams/', include('exams.urls')),
+    path('results/', include('results.urls')),
 ]
 
 if settings.DEBUG:

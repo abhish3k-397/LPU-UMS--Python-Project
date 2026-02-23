@@ -3,9 +3,8 @@ from . import views
 
 urlpatterns = [
     path('', views.attendance_dashboard, name='attendance_dashboard'),
-    path('course/<int:course_id>/start/', views.create_session, name='create_session'),
+    path('slot/<int:slot_id>/start/', views.create_session, name='create_session'),
     path('session/<int:session_id>/mark/', views.mark_attendance, name='mark_attendance'),
-    path('launch/', views.create_session, name='launch_session'), # POST handler for dashboard
     path('request-edit/', views.request_edit, name='request_edit'),
     path('approvals/', views.admin_attendance_approvals, name='admin_attendance_approvals'),
 ]

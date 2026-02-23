@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
+from core.models import Section
 
 class Course(models.Model):
     name = models.CharField(max_length=100)
@@ -10,13 +12,37 @@ class Course(models.Model):
     def __str__(self):
         return f"{self.code} - {self.name}"
 
-class AttendanceSession(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    date = models.DateField(auto_now_add=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+class TimetableSlot(models.Model):
+    DAYS = [
+        ('MON', 'Monday'),
+        ('TUE', 'Tuesday'),
+        ('WED', 'Wednesday'),
+        ('THU', 'Thursday'),
+        ('FRI', 'Friday'),
+    ]
+    
+    day_of_week = models.CharField(max_length=3, choices=DAYS)
+    slot_number = models.IntegerField(help_text="Slot 1-7 (e.g. 9AM to 4PM)")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='slots')
+    section = models.ForeignKey(Section, on_delete=models.CASCADE, related_name='timetable')
+
+    class Meta:
+        unique_together = ('day_of_week', 'slot_number', 'section')
 
     def __str__(self):
-        return f"{self.course.code} - {self.date}"
+        return f"{self.section.name} - {self.day_of_week} Slot {self.slot_number} ({self.course.code})"
+
+class AttendanceSession(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    slot = models.ForeignKey(TimetableSlot, on_delete=models.CASCADE, null=True, blank=True)
+    date = models.DateField(default=timezone.now)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('date', 'slot')
+
+    def __str__(self):
+        return f"{self.course.code} - {self.date} (Slot {self.slot.slot_number if self.slot else 'N/A'})"
 
 class AttendanceRecord(models.Model):
     session = models.ForeignKey(AttendanceSession, on_delete=models.CASCADE, related_name='records')

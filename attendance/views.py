@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from .models import Course, AttendanceSession, AttendanceRecord, AttendanceEditRequest
+from .models import Course, AttendanceSession, AttendanceRecord, AttendanceEditRequest, TimetableSlot
 from django.utils import timezone
+from core.models import User
 
 def is_faculty(user):
     return user.is_authenticated and user.role == 'FACULTY'
@@ -36,19 +37,25 @@ def attendance_dashboard(request):
 
 @login_required
 @user_passes_test(is_faculty)
-def create_session(request, course_id):
-    course = get_object_or_404(Course, id=course_id, faculty=request.user)
+def create_session(request, slot_id):
+    slot = get_object_or_404(TimetableSlot, id=slot_id, course__faculty=request.user)
     
-    # Check if session already exists for today to avoid duplicates and handle 500 crashes
+    # Check if session already exists for this slot today
     today = timezone.now().date()
-    session = AttendanceSession.objects.filter(course=course, date=today).first()
+    session = AttendanceSession.objects.filter(slot=slot, date=today).first()
     
     if not session:
-        session = AttendanceSession.objects.create(course=course, date=today)
-        # Auto-create records for all enrolled students defaulting to Absent
-        for student in course.students.all():
-            AttendanceRecord.objects.create(session=session, student=student, is_present=False)
-        messages.success(request, f"Started new attendance session for {course.name}")
+        session = AttendanceSession.objects.create(
+            course=slot.course,
+            slot=slot,
+            date=today
+        )
+        # Auto-create records for all students in this section
+        section_students = User.objects.filter(role='STUDENT', section=slot.section)
+        for student in section_students:
+            AttendanceRecord.objects.get_or_create(session=session, student=student, defaults={'is_present': False})
+            
+        messages.success(request, f"Started attendance for {slot.course.code} (Section {slot.section.name})")
     
     return redirect('mark_attendance', session_id=session.id)
 
@@ -78,16 +85,13 @@ def mark_attendance(request, session_id):
 @user_passes_test(is_faculty)
 def request_edit(request):
     if request.method == 'POST':
-        from core.models import User
-        from .models import AttendanceEditRequest
-        
         session_id = request.POST.get('session_id')
         student_id = request.POST.get('student_id')
         requested_status = request.POST.get('requested_status') == 'true'
         reason = request.POST.get('reason')
         
         session = get_object_or_404(AttendanceSession, id=session_id, course__faculty=request.user)
-        student = get_object_or_404(User, username=student_id, role='STUDENT')
+        student = get_object_or_404(User, id=student_id, role='STUDENT')
         
         # Prevent duplicates
         if AttendanceEditRequest.objects.filter(session=session, student=student, status='PENDING').exists():
@@ -108,7 +112,11 @@ def request_edit(request):
     
     # Render the request form
     sessions = AttendanceSession.objects.filter(course__faculty=request.user).order_by('-date')
-    return render(request, 'attendance/request_edit.html', {'sessions': sessions})
+    students = User.objects.filter(role='STUDENT').order_by('username')
+    return render(request, 'attendance/request_edit.html', {
+        'sessions': sessions,
+        'students': students
+    })
 
 @login_required
 def admin_attendance_approvals(request):

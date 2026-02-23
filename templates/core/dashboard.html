@@ -82,95 +82,113 @@
 
 
     {% elif user.role == 'FACULTY' %}
-    <!-- FACULTY DASHBOARD PREMIUM OVERHAUL -->
-    <div class="col-12 mb-6">
-        <h3 class="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-3">
-            <svg class="w-7 h-7 text-orange-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
-            Assigned Courses
-        </h3>
-        <p class="text-slate-500 dark:text-slate-400 mt-1">Manage your active classes, punch attendance, and review
-            requests.</p>
-    </div>
+    <!-- FACULTY DASHBOARD PREMIUM OVERHAUL (STUDENT STYLE) -->
 
-    <!-- Course Grid -->
-    <div class="col-md-8 col-lg-8">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
-            {% for course in courses %}
+    <!-- Metric Grid -->
+    <div class="col-12 px-lg-4 mb-10">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <!-- Total Courses -->
             <div
-                class="group bg-white dark:!bg-slate-800 rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-slate-100 dark:border-slate-700 hover:border-orange-500/30 flex flex-col h-full transform hover:-translate-y-1">
-                <div class="flex justify-between items-start mb-4">
-                    <div
-                        class="bg-orange-100 dark:!bg-orange-500/20 text-orange-600 dark:text-orange-400 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">
-                        {{ course.code }}
-                    </div>
-                    <div
-                        class="flex items-center gap-1.5 text-slate-500 dark:text-slate-400 text-sm font-semibold bg-slate-50 dark:!bg-slate-900 border border-slate-100 dark:border-slate-700 px-2.5 py-1 rounded-lg">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        {{ course.students.count }}
-                    </div>
-                </div>
-
-                <h4
-                    class="text-lg font-bold text-slate-800 dark:text-white mb-2 line-clamp-2 group-hover:text-orange-500 transition-colors">
-                    {{ course.name }}
-                </h4>
-                <div class="flex-grow"></div>
-
-                <div class="mt-6 pt-5 border-t border-slate-100 dark:border-slate-700 flex flex-col xl:flex-row gap-3">
-                    <form method="post" action="{% url 'create_session' course.id %}" class="flex-1 m-0">
-                        {% csrf_token %}
-                        <button type="submit"
-                            class="w-full h-full flex justify-center items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white text-sm font-bold py-2.5 px-3 rounded-xl shadow-md shadow-emerald-500/20 transition-all focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 dark:focus:ring-offset-slate-900 border-none m-0">
-                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M5 13l4 4L19 7" />
-                            </svg>
-                            Punch Today
-                        </button>
-                    </form>
-                    <a href="{% url 'request_edit' %}"
-                        class="flex-1 flex justify-center items-center gap-2 bg-white dark:!bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 text-sm font-bold py-2.5 px-3 rounded-xl border border-slate-200 dark:border-slate-600 hover:border-amber-300 dark:hover:border-amber-500/30 transition-all shadow-sm">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                        Request Edit
-                    </a>
-                </div>
-            </div>
-            {% empty %}
-            <div
-                class="col-span-1 md:col-span-2 bg-white dark:!bg-slate-800 rounded-2xl p-8 border border-slate-200 dark:border-slate-700 text-center">
+                class="bg-white dark:!bg-slate-800 rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 group hover:scale-[1.02] transition-transform duration-300">
                 <div
-                    class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:!bg-slate-700 text-slate-400 mb-4">
-                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
+                    class="w-10 h-10 bg-indigo-50 dark:!bg-indigo-500/10 rounded-xl flex items-center justify-center mb-4 border border-indigo-100 dark:!border-indigo-500/20 shadow-inner">
+                    <span class="text-xl text-indigo-500">📚</span>
                 </div>
-                <h4 class="text-lg font-bold text-slate-800 dark:text-white mb-2">No Courses Assigned</h4>
-                <p class="text-slate-500 dark:text-slate-400 max-w-sm mx-auto">You currently have no courses assigned to
-                    your profile. Please contact the administrator.</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Courses</p>
+                <h3 class="text-3xl font-black text-slate-800 dark:!text-white m-0">
+                    {{ total_courses_count }}
+                </h3>
             </div>
-            {% endfor %}
+            <!-- Total Students -->
+            <div
+                class="bg-white dark:!bg-slate-800 rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 group hover:scale-[1.02] transition-transform duration-300">
+                <div
+                    class="w-10 h-10 bg-emerald-50 dark:!bg-emerald-500/10 rounded-xl flex items-center justify-center mb-4 border border-emerald-100 dark:!border-emerald-500/20 shadow-inner">
+                    <span class="text-xl text-emerald-500">👥</span>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Students</p>
+                <h3 class="text-3xl font-black text-slate-800 dark:!text-white m-0">
+                    {{ total_students }}
+                </h3>
+            </div>
+            <!-- Active Sessions -->
+            <div
+                class="bg-white dark:!bg-slate-800 rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 group hover:scale-[1.02] transition-transform duration-300">
+                <div
+                    class="w-10 h-10 bg-orange-50 dark:!bg-orange-500/10 rounded-xl flex items-center justify-center mb-4 border border-orange-100 dark:!border-orange-500/20 shadow-inner">
+                    <span class="text-xl text-orange-500">⚡</span>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Sessions Today</p>
+                <h3 class="text-3xl font-black text-slate-800 dark:!text-white m-0">
+                    {{ active_sessions_today }}
+                </h3>
+            </div>
+            <!-- Pending Requests -->
+            <div
+                class="bg-white dark:!bg-slate-800 rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 group hover:scale-[1.02] transition-transform duration-300">
+                <div
+                    class="w-10 h-10 bg-rose-50 dark:!bg-rose-500/10 rounded-xl flex items-center justify-center mb-4 border border-rose-100 dark:!border-rose-500/20 shadow-inner">
+                    <span class="text-xl text-rose-500">📝</span>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Pending Edits</p>
+                <h3 class="text-3xl font-black text-slate-800 dark:!text-white m-0">
+                    {{ pending_edits_count }}
+                </h3>
+            </div>
         </div>
     </div>
 
-    <!-- Quick Actions Widget -->
-    <div class="col-md-4 col-lg-4">
-        <div class="flex flex-col gap-6 mt-6 md:mt-0">
-            <!-- Make-up Classes -->
-            <div
-                class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-6 shadow-lg shadow-indigo-500/20 text-white relative overflow-hidden group hover:shadow-indigo-500/40 transition-shadow">
+    <!-- Portal Grid -->
+    <div class="col-12 px-lg-4 mb-20">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Attendance Hub -->
+            <a href="{% url 'request_edit' %}"
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-indigo-600 p-8 shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all duration-300 hover:-translate-y-1">
                 <div
-                    class="absolute -right-6 -top-6 opacity-20 transform group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500">
-                    <svg class="w-40 h-40" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <div class="relative z-10 text-white">
+                    <div
+                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        📅</div>
+                    <h4 class="text-2xl font-black mb-1 tracking-tight">Attendance Edit</h4>
+                    <p class="text-indigo-100 text-sm font-medium opacity-90 m-0">Review edit requests and authorize
+                        changes.</p>
+                </div>
+            </a>
+
+            <!-- Course Control -->
+            <div
+                class="group relative overflow-hidden rounded-[2.5rem] bg-emerald-600 p-8 shadow-xl shadow-emerald-500/20 transition-all duration-300">
+                <div
+                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="relative z-10 text-white">
+                    <div
+                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        📚</div>
+                    <h4 class="text-2xl font-black mb-1 tracking-tight">Course Center</h4>
+                    <p class="text-emerald-100 text-sm font-medium opacity-90 m-0">Overview of your assigned academic
+                        load.</p>
+                </div>
+            </div>
+
+            <!-- Remedial Scheduler -->
+            <a href="{% url 'faculty_remedial' %}"
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-purple-600 p-8 shadow-xl shadow-purple-500/20 hover:shadow-purple-500/40 transition-all duration-300 hover:-translate-y-1">
+                <div
+                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path
                             d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-2-7-2c-2.415 0-4.822 1.04-6.236 2.34A1 1 0 002 9.242v1.832a1 1 0 00.655.936l1.24.413a1 1 0 001.076-.239l1.699-1.698A4.956 4.956 0 018 10c1.072 0 2.062.338 2.871.916l.488.324zM8 12a1 1 0 100-2 1 1 0 000 2z" />
                         <path fill-rule="evenodd"
@@ -178,211 +196,336 @@
                             clip-rule="evenodd" />
                     </svg>
                 </div>
-                <div class="relative z-10">
+                <div class="relative z-10 text-white">
                     <div
-                        class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center mb-4 border border-white/30 text-2xl shadow-sm">
-                        📅
-                    </div>
-                    <h3 class="text-xl font-bold mb-2 text-white">Make-Up Classes</h3>
-                    <p class="text-indigo-100 text-sm mb-6 leading-relaxed">Propose remedial sessions and generate codes
-                        for out-of-schedule classes.</p>
-                    <a href="{% url 'faculty_remedial' %}"
-                        class="inline-flex w-full justify-center items-center gap-2 bg-white text-indigo-600 hover:bg-slate-50 font-bold py-3 px-4 rounded-xl shadow-md transition-colors border-none no-underline">
-                        Manage Schedule
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Food Ordering -->
-            <div
-                class="bg-gradient-to-br from-rose-500 to-orange-500 rounded-2xl p-6 shadow-lg shadow-orange-500/20 text-white relative overflow-hidden group hover:shadow-orange-500/40 transition-shadow">
-                <div
-                    class="absolute -right-6 -top-6 opacity-20 transform group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-500">
-                    <svg class="w-40 h-40" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707.707a1 1 0 101.414 1.414l.707-.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
-                    </svg>
-                </div>
-                <div class="relative z-10">
-                    <div
-                        class="w-12 h-12 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center mb-4 border border-white/30 text-2xl shadow-sm">
-                        🍔
-                    </div>
-                    <h3 class="text-xl font-bold mb-2 text-white">Campus Dining</h3>
-                    <p class="text-orange-100 text-sm mb-6 leading-relaxed">Skip the queue. Pre-order your meals from
-                        the faculty lounge or class.</p>
-                    <a href="{% url 'student_menu' %}"
-                        class="inline-flex w-full justify-center items-center gap-2 bg-white text-orange-600 hover:bg-slate-50 font-bold py-3 px-4 rounded-xl shadow-md transition-colors border-none no-underline">
-                        Order Food
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    {% elif user.role == 'STUDENT' %}
-    <!-- STUDENT DASHBOARD -->
-    <!-- STUDENT DASHBOARD -->
-    <div class="col-12 mt-4 mb-6">
-        <div class="flex items-center gap-3 border-b pb-4 dark:border-slate-700/50 mb-6">
-            <h3 class="text-2xl md:text-3xl font-black text-slate-800 dark:text-white tracking-tight m-0">Student Portal
-            </h3>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
-
-            <!-- 1. Attendance -->
-            <a href="{% url 'attendance_dashboard' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-500 to-indigo-600 p-6 sm:p-8 shadow-lg shadow-blue-500/20 hover:shadow-xl hover:shadow-blue-500/40 transition-all duration-300 hover:-translate-y-1">
-                <div
-                    class="absolute -right-6 -bottom-6 opacity-20 transform group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-500 text-white">
-                    <svg class="w-32 h-32 md:w-40 md:h-40" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-                <div class="relative z-10 text-white flex flex-col h-full">
-                    <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
-                        📊
-                    </div>
-                    <div class="mt-auto">
-                        <h4 class="text-2xl font-bold mb-1 tracking-tight text-white">Attendance</h4>
-                        <p class="text-blue-100 text-sm md:text-base font-medium opacity-90 m-0">View daily scan records
-                        </p>
-                    </div>
+                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        ⚡</div>
+                    <h4 class="text-2xl font-black mb-1 tracking-tight">Remedials</h4>
+                    <p class="text-purple-100 text-sm font-medium opacity-90 m-0">Schedule and manage make-up sessions.
+                    </p>
                 </div>
             </a>
 
-            <!-- 2. Courses -->
-            <a href="{% url 'student_courses' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-emerald-500 to-teal-600 p-6 sm:p-8 shadow-lg shadow-emerald-500/20 hover:shadow-xl hover:shadow-emerald-500/40 transition-all duration-300 hover:-translate-y-1">
-                <div
-                    class="absolute -right-6 -bottom-6 opacity-20 transform group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500 text-white">
-                    <svg class="w-32 h-32 md:w-40 md:h-40" fill="currentColor" viewBox="0 0 20 20">
-                        <path
-                            d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z">
-                        </path>
-                    </svg>
-                </div>
-                <div class="relative z-10 text-white flex flex-col h-full">
-                    <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
-                        📚
-                    </div>
-                    <div class="mt-auto">
-                        <h4 class="text-2xl font-bold mb-1 tracking-tight text-white">Courses</h4>
-                        <p class="text-emerald-100 text-sm md:text-base font-medium opacity-90 m-0">Manage enrolled
-                            subjects</p>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 3. Faculties -->
-            <a href="{% url 'student_faculties' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-purple-500 to-fuchsia-600 p-6 sm:p-8 shadow-lg shadow-purple-500/20 hover:shadow-xl hover:shadow-purple-500/40 transition-all duration-300 hover:-translate-y-1">
-                <div
-                    class="absolute -right-6 -bottom-6 opacity-20 transform group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-500 text-white">
-                    <svg class="w-32 h-32 md:w-40 md:h-40" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                            clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-                <div class="relative z-10 text-white flex flex-col h-full">
-                    <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
-                        👨‍🏫
-                    </div>
-                    <div class="mt-auto">
-                        <h4 class="text-2xl font-bold mb-1 tracking-tight text-white">Faculties</h4>
-                        <p class="text-purple-100 text-sm md:text-base font-medium opacity-90 m-0">Connect with teachers
-                        </p>
-                    </div>
-                </div>
-            </a>
-
-            <!-- 4. Food -->
+            <!-- Dining Lounge -->
             <a href="{% url 'student_menu' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-orange-500 to-rose-600 p-6 sm:p-8 shadow-lg shadow-orange-500/20 hover:shadow-xl hover:shadow-orange-500/40 transition-all duration-300 hover:-translate-y-1">
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-800 p-8 shadow-2xl shadow-slate-200/40 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 transition-all duration-300 hover:-translate-y-1">
                 <div
-                    class="absolute -right-6 -bottom-6 opacity-20 transform group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500 text-white">
-                    <svg class="w-32 h-32 md:w-40 md:h-40" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-slate-900 dark:text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path
                             d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707.707a1 1 0 101.414 1.414l.707-.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z">
                         </path>
                     </svg>
                 </div>
-                <div class="relative z-10 text-white flex flex-col h-full">
+                <div class="relative z-10 text-slate-800 dark:!text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
-                        🍕
-                    </div>
-                    <div class="mt-auto">
-                        <h4 class="text-2xl font-bold mb-1 tracking-tight text-white">Campus Dining</h4>
-                        <p class="text-orange-100 text-sm md:text-base font-medium opacity-90 m-0">Pre-order cafeteria
-                            food</p>
-                    </div>
+                        class="w-14 h-14 bg-orange-50 dark:!bg-orange-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-orange-100 dark:!border-orange-500/20 group-hover:scale-110 transition-transform">
+                        🍔</div>
+                    <h4 class="text-2xl font-black mb-1 tracking-tight">Dining Lounge</h4>
+                    <p class="text-slate-400 text-sm font-medium m-0">Pre-order meals from the faculty lounge.</p>
                 </div>
             </a>
 
-            <!-- 5. Exams -->
-            <a href="{% url 'exam_list' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-cyan-500 to-blue-600 p-6 sm:p-8 shadow-lg shadow-cyan-500/20 hover:shadow-xl hover:shadow-cyan-500/40 transition-all duration-300 hover:-translate-y-1">
+            <!-- Results Entry -->
+            <div
+                class="group relative overflow-hidden rounded-[2.5rem] bg-rose-600 p-8 shadow-xl shadow-rose-500/20 transition-all duration-300">
                 <div
-                    class="absolute -right-6 -bottom-6 opacity-20 transform group-hover:scale-110 group-hover:-rotate-12 transition-transform duration-500 text-white">
-                    <svg class="w-32 h-32 md:w-40 md:h-40" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <div class="relative z-10 text-white">
+                    <div
+                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        🏆</div>
+                    <h4 class="text-2xl font-black mb-1 tracking-tight">Academic Hub</h4>
+                    <p class="text-rose-100 text-sm font-medium opacity-90 m-0">Grade recording and semester analytics.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Exam Duty -->
+            <a href="{% url 'exam_list' %}"
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-cyan-600 p-8 shadow-xl shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all duration-300 hover:-translate-y-1">
+                <div
+                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
                         <path fill-rule="evenodd"
                             d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
                             clip-rule="evenodd"></path>
                     </svg>
                 </div>
-                <div class="relative z-10 text-white flex flex-col h-full">
+                <div class="relative z-10 text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
-                        📝
+                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        📝</div>
+                    <h4 class="text-2xl font-black mb-1 tracking-tight">Exam Duty</h4>
+                    <p class="text-cyan-100 text-sm font-medium opacity-90 m-0">Duty rosters and invigilation schedules.
+                    </p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Active Class Management (Timed Slots) -->
+    <div class="col-12 px-lg-4 pb-20">
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                <div
+                    class="w-10 h-10 bg-slate-100 dark:!bg-slate-800 rounded-xl flex items-center justify-center text-slate-800 dark:!text-white border border-slate-200 dark:!border-slate-700 shadow-sm">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <h4 class="text-2xl font-black text-slate-800 dark:text-white m-0 tracking-tight">Active Class
+                    Management</h4>
+            </div>
+            {% if active_slots %}
+            <span
+                class="px-4 py-2 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded-full uppercase tracking-widest animate-pulse border border-emerald-500/20">
+                LIVE SLOT ACTIVE
+            </span>
+            {% endif %}
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for slot in active_slots %}
+            <div
+                class="group bg-white dark:!bg-slate-800 rounded-[2.5rem] p-0 overflow-hidden border border-slate-100 dark:!border-slate-700/50 shadow-2xl shadow-slate-200/40 dark:shadow-none transition-all duration-300 hover:-translate-y-1">
+                <div class="p-8">
+                    <div class="flex justify-between items-start mb-6">
+                        <span
+                            class="px-4 py-1.5 bg-slate-900 dark:!bg-slate-700 text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg">
+                            {{ slot.course.code }}
+                        </span>
+                        <div
+                            class="flex items-center gap-1.5 text-slate-400 font-bold text-xs uppercase tracking-wider">
+                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                            Slot {{ slot.slot_number }}
+                        </div>
                     </div>
-                    <div class="mt-auto">
-                        <h4 class="text-2xl font-bold mb-1 tracking-tight text-white">Exams</h4>
-                        <p class="text-cyan-100 text-sm md:text-base font-medium opacity-90 m-0">View dates & syllabus
-                        </p>
-                    </div>
+                    <h5 class="text-xl font-black text-slate-800 dark:!text-white mb-2 leading-tight">
+                        {{ slot.course.name }}
+                    </h5>
+                    <p class="text-slate-400 font-bold text-sm mb-8">
+                        Section: {{ slot.section.name }}
+                    </p>
+
+                    <form method="post" action="{% url 'create_session' slot.id %}" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit"
+                            class="w-full h-14 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-black rounded-2xl shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center gap-2 border-none">
+                            <svg class="w-6 h-6 font-black" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            PUNCH ATTENDANCE
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% empty %}
+            <div
+                class="col-span-full py-20 bg-slate-50 dark:!bg-slate-900/50 rounded-[3rem] border-2 border-dashed border-slate-200 dark:!border-slate-800 flex flex-col items-center justify-center text-center">
+                <div class="text-5xl mb-6">☕</div>
+                <h5 class="text-xl font-black text-slate-800 dark:!text-white mb-2">No Active Classes</h5>
+                <p class="text-slate-400 font-bold max-w-sm">No classes scheduled for the current hour. Time for a
+                    break!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% elif user.role == 'STUDENT' %}
+    <!-- STUDENT DASHBOARD PREMIUM OVERHAUL -->
+
+
+    <!-- Student Metric Grid -->
+    <div class="col-12 px-lg-4 mb-10">
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <!-- Attendance -->
+            <div
+                class="bg-white dark:!bg-slate-800 rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 group hover:scale-[1.02] transition-transform duration-300">
+                <div
+                    class="w-10 h-10 bg-blue-50 dark:!bg-blue-500/10 rounded-xl flex items-center justify-center mb-4 border border-blue-100 dark:!border-blue-500/20 shadow-inner">
+                    <span class="text-xl text-blue-500">📊</span>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Overall Attendance</p>
+                <h3 class="text-3xl font-black text-slate-800 dark:!text-white m-0">
+                    {{ overall_attendance }}%
+                </h3>
+            </div>
+            <!-- Latest SGPA -->
+            <div
+                class="bg-gradient-to-br from-orange-500 to-red-600 rounded-[2rem] p-6 shadow-xl shadow-orange-500/20 text-white group hover:scale-[1.02] transition-transform duration-300">
+                <div
+                    class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center mb-4 border border-white/30 shadow-inner">
+                    <span class="text-xl">🏆</span>
+                </div>
+                <p class="text-[10px] font-black uppercase tracking-widest opacity-80 mb-1">Latest SGPA</p>
+                <h3 class="text-3xl font-black m-0">
+                    {{ latest_sgpa }}
+                </h3>
+            </div>
+            <!-- Enrolled Courses -->
+            <div
+                class="bg-white dark:!bg-slate-800 rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 group hover:scale-[1.02] transition-transform duration-300">
+                <div
+                    class="w-10 h-10 bg-emerald-50 dark:!bg-emerald-500/10 rounded-xl flex items-center justify-center mb-4 border border-emerald-100 dark:!border-emerald-500/20 shadow-inner">
+                    <span class="text-xl text-emerald-500">📚</span>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Courses</p>
+                <h3 class="text-3xl font-black text-slate-800 dark:!text-white m-0">
+                    {{ enrolled_courses_count }}
+                </h3>
+            </div>
+            <!-- Credit Progress -->
+            <div
+                class="bg-white dark:!bg-slate-800 rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 group hover:scale-[1.02] transition-transform duration-300">
+                <div
+                    class="w-10 h-10 bg-purple-50 dark:!bg-purple-500/10 rounded-xl flex items-center justify-center mb-4 border border-purple-100 dark:!border-purple-500/20 shadow-inner">
+                    <span class="text-xl text-purple-500">💎</span>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Credit Units</p>
+                <h3 class="text-3xl font-black text-slate-800 dark:!text-white m-0">
+                    {{ credits_progress }}
+                </h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portal Grid -->
+    <div class="col-12 px-lg-4 mb-20">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Attendance Portal -->
+            <a href="{% url 'attendance_dashboard' %}"
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-indigo-600 p-8 shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all duration-300 hover:-translate-y-1">
+                <div
+                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <div class="relative z-10 text-white">
+                    <div
+                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        📊</div>
+                    <h4 class="text-2xl font-black mb-1 tracking-tight">Attendance</h4>
+                    <p class="text-indigo-100 text-sm font-medium opacity-90 m-0">Scan history and daily presence
+                        tracking.</p>
                 </div>
             </a>
 
-            <!-- 6. Results -->
-            <a href="#"
-                class="group block no-underline relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-pink-500 to-rose-600 p-6 sm:p-8 shadow-lg shadow-pink-500/20 hover:shadow-xl hover:shadow-pink-500/40 transition-all duration-300 hover:-translate-y-1">
+            <!-- Courses Portal -->
+            <a href="{% url 'student_courses' %}"
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-emerald-600 p-8 shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all duration-300 hover:-translate-y-1">
                 <div
-                    class="absolute -right-6 -bottom-6 opacity-20 transform group-hover:scale-110 group-hover:rotate-12 transition-transform duration-500 text-white">
-                    <svg class="w-32 h-32 md:w-40 md:h-40" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="relative z-10 text-white">
+                    <div
+                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        📚</div>
+                    <h4 class="text-2xl font-black mb-1 tracking-tight">Courses</h4>
+                    <p class="text-emerald-100 text-sm font-medium opacity-90 m-0">Syllabus, notes, and module progress.
+                    </p>
+                </div>
+            </a>
+
+            <!-- Faculties Portal -->
+            <a href="{% url 'student_faculties' %}"
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-purple-600 p-8 shadow-xl shadow-purple-500/20 hover:shadow-purple-500/40 transition-all duration-300 hover:-translate-y-1">
+                <div
+                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <div class="relative z-10 text-white">
+                    <div
+                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        👨‍🏫</div>
+                    <h4 class="text-2xl font-black mb-1 tracking-tight">Faculties</h4>
+                    <p class="text-purple-100 text-sm font-medium opacity-90 m-0">Connect with your assigned course
+                        teachers.</p>
+                </div>
+            </a>
+
+            <!-- Food Portal -->
+            <a href="{% url 'student_menu' %}"
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-800 p-8 shadow-2xl shadow-slate-200/40 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 transition-all duration-300 hover:-translate-y-1">
+                <div
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-slate-900 dark:text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707.707a1 1 0 101.414 1.414l.707-.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="relative z-10 text-slate-800 dark:!text-white">
+                    <div
+                        class="w-14 h-14 bg-orange-50 dark:!bg-orange-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-orange-100 dark:!border-orange-500/20 group-hover:scale-110 transition-transform">
+                        🍔</div>
+                    <h4 class="text-2xl font-black mb-1 tracking-tight">Campus Dining</h4>
+                    <p class="text-slate-400 text-sm font-medium m-0">Pre-order meals and bypass cafeteria queues.</p>
+                </div>
+            </a>
+
+            <!-- Exams Portal -->
+            <a href="{% url 'exam_list' %}"
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-cyan-600 p-8 shadow-xl shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all duration-300 hover:-translate-y-1">
+                <div
+                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
+                        <path fill-rule="evenodd"
+                            d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <div class="relative z-10 text-white">
+                    <div
+                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        📝</div>
+                    <h4 class="text-2xl font-black mb-1 tracking-tight">Exams</h4>
+                    <p class="text-cyan-100 text-sm font-medium opacity-90 m-0">Schedules, admit cards, and seat
+                        planning.</p>
+                </div>
+            </a>
+
+            <!-- Results Portal -->
+            <a href="{% url 'student_results' %}"
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-rose-600 p-8 shadow-xl shadow-rose-500/20 hover:shadow-rose-500/40 transition-all duration-300 hover:-translate-y-1">
+                <div
+                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
                             d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z"
                             clip-rule="evenodd"></path>
                     </svg>
                 </div>
-                <div class="relative z-10 text-white flex flex-col h-full">
+                <div class="relative z-10 text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
-                        🏆
-                    </div>
-                    <div class="mt-auto">
-                        <h4 class="text-2xl font-bold mb-1 tracking-tight text-white">Results</h4>
-                        <p class="text-pink-100 text-sm md:text-base font-medium opacity-90 m-0">Check your grades</p>
-                    </div>
+                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        🏆</div>
+                    <h4 class="text-2xl font-black mb-1 tracking-tight">Results</h4>
+                    <p class="text-rose-100 text-sm font-medium opacity-90 m-0">Historical grades and CGPA analytics.
+                    </p>
                 </div>
             </a>
-
         </div>
     </div>
     {% endif %}

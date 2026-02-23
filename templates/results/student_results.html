@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="row mb-8">
+    <div class="col-12 px-lg-4 text-center text-md-start">
+        <h2 class="text-4xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">Academic Journey</h2>
+        <p class="text-slate-500 dark:text-slate-400 font-medium">Comprehensive performance analytics and historical
+            records.</p>
+    </div>
+</div>
+
+<!-- Key Metrics Dashboard -->
+<div class="row g-4 px-lg-4 mb-10">
+    <div class="col-6 col-md-3">
+        <div
+            class="bg-gradient-to-br from-orange-500 to-red-600 rounded-[2rem] p-6 shadow-xl shadow-orange-500/20 text-white group hover:scale-[1.02] transition-transform duration-300">
+            <div
+                class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center mb-4 border border-white/30 shadow-inner">
+                <span class="text-xl">🎓</span>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-widest opacity-80 mb-1">Current CGPA</p>
+            <h3 class="text-3xl font-black m-0">
+                {{ cgpa }}
+            </h3>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div
+            class="bg-white dark:!bg-slate-800 rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 group hover:scale-[1.02] transition-transform duration-300">
+            <div
+                class="w-10 h-10 bg-indigo-50 dark:!bg-indigo-500/10 rounded-xl flex items-center justify-center mb-4 border border-indigo-100 dark:!border-indigo-500/20 shadow-inner">
+                <span class="text-xl text-indigo-500">💎</span>
+            </div>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Credits</p>
+            <h3 class="text-3xl font-black text-slate-800 dark:!text-white m-0">
+                {{ total_credits }}
+            </h3>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div
+            class="bg-white dark:!bg-slate-800 rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 group hover:scale-[1.02] transition-transform duration-300">
+            <div
+                class="w-10 h-10 bg-emerald-50 dark:!bg-emerald-500/10 rounded-xl flex items-center justify-center mb-4 border border-emerald-100 dark:!border-emerald-500/20 shadow-inner">
+                <span class="text-xl text-emerald-500">📅</span>
+            </div>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Completed Sem</p>
+            <h3 class="text-3xl font-black text-slate-800 dark:!text-white m-0">
+                {{ latest_semester }}
+            </h3>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div
+            class="bg-white dark:!bg-slate-800 rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 group hover:scale-[1.02] transition-transform duration-300">
+            <div
+                class="w-10 h-10 bg-amber-50 dark:!bg-amber-500/10 rounded-xl flex items-center justify-center mb-4 border border-amber-100 dark:!border-amber-500/20 shadow-inner">
+                <span class="text-xl text-amber-500">✨</span>
+            </div>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Academic Standing</p>
+            <h3 class="text-xl font-black text-slate-800 dark:!text-white m-0">In Good Standing</h3>
+        </div>
+    </div>
+</div>
+
+<div class="row px-lg-4">
+    <div class="col-12">
+        <div class="space-y-10 mb-20">
+            {% for result in results %}
+            <div
+                class="bg-white dark:!bg-slate-800 rounded-[2.5rem] overflow-hidden border border-slate-100 dark:!border-slate-700/50 shadow-2xl shadow-slate-200/40 dark:shadow-none transition-all">
+                <div
+                    class="px-8 py-6 bg-slate-50/50 dark:!bg-slate-900/50 border-b border-slate-100 dark:!border-slate-700/50 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-14 h-14 bg-slate-900 dark:!bg-slate-700 text-white rounded-2xl flex items-center justify-center font-black text-2xl shadow-lg">
+                            {{ result.semester }}
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-black text-slate-800 dark:!text-white m-0 tracking-tight">
+                                Semester {{ result.semester }}
+                            </h4>
+                            <p class="text-xs font-bold text-slate-400 m-0 uppercase tracking-widest">Performance Record
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-6">
+                        <div class="text-center md:text-right">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0">Total
+                                Credits</p>
+                            <p class="text-lg font-black text-slate-800 dark:!text-white m-0">
+                                {{ result.credits_earned }} / {{ result.total_credits }}
+                            </p>
+                        </div>
+                        <div
+                            class="bg-orange-50 dark:!bg-orange-500/20 px-5 py-2 rounded-2xl border border-orange-100 dark:!border-orange-500/30 text-center">
+                            <p class="text-[10px] font-black text-orange-500 uppercase tracking-widest mb-0">SGPA</p>
+                            <p class="text-3xl font-black text-orange-600 dark:text-orange-400 m-0 leading-none">
+                                {{ result.sgpa }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-0 overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/30 dark:!bg-slate-900/40">
+                                <th class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                    Course Code & Name</th>
+                                <th
+                                    class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
+                                    Credits</th>
+                                <th
+                                    class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
+                                    Grade</th>
+                                <th
+                                    class="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">
+                                    Points</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 dark:!divide-slate-700/50">
+                            {% for grade in result.grades.all %}
+                            <tr class="group hover:bg-slate-50/50 dark:hover:!bg-slate-900/40 transition-colors">
+                                <td class="px-8 py-5">
+                                    <p class="text-xs font-bold text-indigo-500 mb-1 tracking-widest uppercase">
+                                        {{ grade.course_code }}
+                                    </p>
+                                    <p class="text-sm font-black text-slate-800 dark:!text-white m-0">
+                                        {{ grade.course_name }}
+                                    </p>
+                                </td>
+                                <td class="px-8 py-5 text-center">
+                                    <span
+                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 dark:!bg-slate-700 text-slate-600 dark:!text-slate-300 font-bold text-sm">
+                                        {{ grade.credits }}
+                                    </span>
+                                </td>
+                                <td class="px-8 py-5 text-center">
+                                    <span
+                                        class="inline-flex items-center justify-center w-10 h-10 rounded-xl font-black text-lg shadow-sm {% if grade.grade == 'O' or grade.grade == 'A+' %}bg-emerald-100 dark:!bg-emerald-500/20 text-emerald-600 dark:!text-emerald-400 border border-emerald-200 dark:!border-emerald-500/30{% elif grade.grade == 'A' or grade.grade == 'B+' %}bg-indigo-100 dark:!bg-indigo-500/20 text-indigo-600 dark:!text-indigo-400 border border-indigo-200 dark:!border-indigo-500/30{% elif grade.grade == 'B' or grade.grade == 'C' %}bg-amber-100 dark:!bg-amber-500/20 text-amber-600 dark:!text-amber-400 border border-amber-200 dark:!border-amber-500/30{% else %}bg-rose-100 dark:!bg-rose-500/20 text-rose-600 dark:!text-rose-400 border border-rose-200 dark:!border-rose-500/30{% endif %}">
+                                        {{ grade.grade }}
+                                    </span>
+                                </td>
+                                <td class="px-8 py-5 text-right font-black text-slate-800 dark:!text-white">
+                                    {{ grade.grade_points }}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div
+                    class="px-8 py-4 bg-slate-50 dark:!bg-slate-900/50 border-t border-slate-100 dark:!border-slate-700/50 flex justify-between items-center text-center">
+                    <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-start">Cumulative
+                        Progress (CGPA)</span>
+                    <span class="text-xl font-black text-slate-800 dark:!text-white">
+                        {{ result.cgpa }}
+                    </span>
+                </div>
+            </div>
+            {% empty %}
+            <div
+                class="text-center py-20 bg-slate-50 dark:!bg-slate-900/50 rounded-[3rem] border-2 border-dashed border-slate-200 dark:!border-slate-700">
+                <div
+                    class="w-24 h-24 bg-white dark:!bg-slate-800 rounded-full flex items-center justify-center text-5xl mx-auto mb-6 shadow-inner">
+                    📄</div>
+                <h3 class="text-2xl font-black text-slate-800 dark:!text-white mb-2">Academic Record Empty</h3>
+                <p class="text-slate-400 font-medium max-w-sm mx-auto">Results will be published here once they are
+                    officially declared by the university.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

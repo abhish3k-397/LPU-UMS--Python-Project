@@ -48,13 +48,20 @@ def generate_mock_data():
         )
         faculties.append(faculty)
 
-    print("Creating 5 Courses (1 per Faculty)...")
-    course_names = ["Data Structures", "Web Development", "Machine Learning", "Cloud Computing", "Database Systems"]
+    print("Creating 5 Current Courses (Semester 4)...")
+    current_course_data = [
+        ("Artificial Intelligence", "CSE401"),
+        ("Mobile App Development", "CSE402"),
+        ("Cyber Security", "CSE403"),
+        ("Natural Language Processing", "CSE404"),
+        ("Embedded Systems", "ECE405")
+    ]
     courses = []
     for i in range(5):
+        name, code = current_course_data[i]
         course = Course.objects.create(
-            name=course_names[i],
-            code=f"CSE{301 + i}",
+            name=name,
+            code=code,
             faculty=faculties[i]
         )
         # Enroll all 10 students in all 5 courses
@@ -139,6 +146,76 @@ def generate_mock_data():
         )
         exam.syllabus.save(f'syllabus_{course.code.lower()}.txt', dummy_syllabus)
         exam.resources.save(f'resource_{course.code.lower()}.txt', dummy_resource)
+
+    print("Creating Past 3 Semesters Results for Students...")
+    from results.models import SemesterResult, CourseGrade
+    
+    # Define unique courses for each semester to avoid repetition
+    sem_courses_pool = {
+        1: [
+            ("Introduction to Programming", "CSE101", 4),
+            ("Calculus-I", "MTH101", 4),
+            ("Communication Skills-I", "PEL101", 2),
+            ("Basic Electronics", "ECE101", 3),
+        ],
+        2: [
+            ("Data Structures & Algorithms", "CSE201", 4),
+            ("Differential Equations", "MTH201", 4),
+            ("Environmental Studies", "EVS201", 2),
+            ("Computer Architecture", "CSE202", 4),
+        ],
+        3: [
+            ("Operating Systems Concepts", "CSE301", 4),
+            ("Object Oriented Programming", "CSE302", 4),
+            ("Discrete Mathematics", "MTH301", 4),
+            ("Database Management Systems", "CSE303", 4),
+        ]
+    }
+    
+    grades_map = {
+        'O': 10, 'A+': 9, 'A': 8, 'B+': 7, 'B': 6, 'C': 5, 'P': 4, 'F': 0
+    }
+
+    for student in students:
+        total_points = 0
+        total_credits = 0
+        for sem in range(1, 4):
+            # Take all courses defined for that semester
+            sem_courses = sem_courses_pool[sem]
+            sem_credits = sum(c[2] for c in sem_courses)
+            sem_points = 0
+            
+            # Create a result for this semester
+            res = SemesterResult.objects.create(
+                student=student,
+                semester=sem,
+                sgpa=0, 
+                cgpa=0, 
+                credits_earned=sem_credits,
+                total_credits=sem_credits
+            )
+            
+            for c_name, c_code, c_credits in sem_courses:
+                grade_key = random.choice(['O', 'A+', 'A', 'B+'])
+                g_points = grades_map[grade_key]
+                CourseGrade.objects.create(
+                    semester_result=res,
+                    course_name=c_name,
+                    course_code=c_code,
+                    grade=grade_key,
+                    grade_points=g_points,
+                    credits=c_credits
+                )
+                sem_points += (g_points * c_credits)
+            
+            sgpa = round(sem_points / sem_credits, 2)
+            total_points += sem_points
+            total_credits += sem_credits
+            cgpa = round(total_points / total_credits, 2)
+            
+            res.sgpa = sgpa
+            res.cgpa = cgpa
+            res.save()
 
     print("Mock Data Generation Complete!")
 
