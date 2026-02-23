@@ -151,3 +151,49 @@ def admin_attendance_approvals(request):
         return redirect('admin_attendance_approvals')
         
     return render(request, 'attendance/admin_approvals.html', {'requests': requests})
+
+@login_required
+def timetable_view(request):
+    days = ['MON', 'TUE', 'WED', 'THU', 'FRI']
+    slots = range(1, 8)
+    
+    if request.user.role == 'FACULTY':
+        timetable_slots = list(TimetableSlot.objects.filter(course__faculty=request.user))
+    elif request.user.role == 'STUDENT':
+        if request.user.section:
+            timetable_slots = list(TimetableSlot.objects.filter(section=request.user.section))
+        else:
+            timetable_slots = []
+            messages.warning(request, "You are not assigned to any section. Please contact admin.")
+    else:
+        return redirect('dashboard')
+    
+    # Organize data into rows for easy template iteration
+    slot_times = {
+        1: "09:00 - 10:00",
+        2: "10:00 - 11:00",
+        3: "11:00 - 12:00",
+        4: "12:00 - 13:00",
+        5: "13:00 - 14:00",
+        6: "14:00 - 15:00",
+        7: "15:00 - 16:00",
+    }
+    
+    timetable_rows = []
+    for slot_num in slots:
+        row = {
+            'slot_num': slot_num,
+            'time_range': slot_times.get(slot_num, ""),
+            'days': []
+        }
+        for day in days:
+            match = next((s for s in timetable_slots if s.day_of_week == day and s.slot_number == slot_num), None)
+            row['days'].append(match)
+        timetable_rows.append(row)
+        
+    context = {
+        'timetable_rows': timetable_rows,
+        'day_labels': [{'code': d, 'name': dict(TimetableSlot.DAYS).get(d)} for d in days],
+        'now': timezone.now()
+    }
+    return render(request, 'attendance/timetable.html', context)

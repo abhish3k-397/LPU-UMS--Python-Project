@@ -7,4 +7,5 @@ urlpatterns = [
     path('session/<int:session_id>/mark/', views.mark_attendance, name='mark_attendance'),
     path('request-edit/', views.request_edit, name='request_edit'),
     path('approvals/', views.admin_attendance_approvals, name='admin_attendance_approvals'),
+    path('timetable/', views.timetable_view, name='timetable'),
 ]

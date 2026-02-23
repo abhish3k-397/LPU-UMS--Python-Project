@@ -90,6 +90,12 @@
                             class="text-xs px-2 py-0.5 rounded-md bg-orange-100 dark:bg-orange-500/20 text-orange-700 dark:text-orange-300 font-bold tracking-wide">
                             {{ user.get_role_display|upper }}
                         </span>
+                        {% if user.role == 'STUDENT' and user.section %}
+                        <span
+                            class="text-xs px-2 py-0.5 rounded-md bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 font-bold tracking-wide">
+                            SEC: {{ user.section.name }}
+                        </span>
+                        {% endif %}
                     </div>
                     <form method="post" action="{% url 'logout' %}" class="m-0">
                         {% csrf_token %}
