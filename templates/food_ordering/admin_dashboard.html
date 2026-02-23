@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="h3 font-bold text-gray-800 dark:text-white">Stall Admin Dashboard</h2>
+            <p class="text-gray-600 dark:text-gray-400">Manage incoming orders and monitor peak times.</p>
+        </div>
+    </div>
+
+    <!-- Peak Demand Widget -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div
+                class="card shadow-sm border-0 border-start border-warning border-4 dark:bg-gray-800 dark:border-gray-700">
+                <div class="card-body">
+                    <h5 class="card-title font-bold text-warning mb-3">🔥 Peak Demand Predicted</h5>
+                    <div class="d-flex flex-wrap gap-3">
+                        {% for peak in peak_times|slice:":3" %}
+                        <div
+                            class="px-3 py-2 bg-warning bg-opacity-10 dark:bg-opacity-20 text-warning rounded text-sm font-semibold border border-warning shadow-sm">
+                            {{ peak.time_slot__start_time|time:"g:i A" }} - {{ peak.time_slot__end_time|time:"g:i A" }}
+                            <span class="badge bg-warning text-dark ms-2">{{ peak.order_count }} Orders</span>
+                        </div>
+                        {% empty %}
+                        <div class="text-muted dark:text-gray-400 text-sm">No data yet to predict peak times.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="card shadow-sm border-0 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
+        <div
+            class="card-header bg-white dark:bg-gray-800 border-bottom dark:border-gray-700 py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 font-semibold dark:text-white">Today's Orders Status</h5>
+            <span class="badge bg-primary">{{ today_orders.count }} Total</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 dark:table-dark align-middle">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            # ID</th>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            Student</th>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            Item</th>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            Time Slot</th>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            Total</th>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            Update Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    {% for order in today_orders %}
+                    <tr class="dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                        <td class="py-3 px-4 dark:text-gray-300">#{{ order.id }}</td>
+                        <td class="py-3 px-4 dark:text-gray-300">{{ order.student.username }}</td>
+                        <td class="py-3 px-4 dark:text-gray-300">
+                            <ul class="list-unstyled mb-0 small">
+                                {% for item in order.items.all %}
+                                <li><strong>{{ item.quantity }}x</strong> {{ item.item.name }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td class="py-3 px-4 dark:text-gray-300">
+                            <span class="badge bg-secondary">{{ order.time_slot.start_time|time:"g:i A" }}</span>
+                        </td>
+                        <td class="py-3 px-4 dark:text-gray-300 font-bold">₹{{ order.total_price }}</td>
+                        <td class="py-3 px-4">
+                            <form method="post" class="d-flex gap-2">
+                                {% csrf_token %}
+                                <input type="hidden" name="order_id" value="{{ order.id }}">
+                                <select name="status"
+                                    class="form-select form-select-sm w-auto dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                                    {% for status_code, status_label in status_choices %}
+                                    <option value="{{ status_code }}" {% if order.status==status_code %}selected{% endif
+                                        %}>
+                                        {{ status_label }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted dark:text-gray-400">
+                            No orders placed today.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4 max-w-4xl">
+    <div class="mb-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h2 class="h3 font-bold text-gray-800 dark:text-white mb-1">Mark Attendance</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-0">
+                <strong>Course:</strong> {{ session.course.code }} | <strong>Date:</strong> {{ session.date }}
+            </p>
+        </div>
+        <a href="{% url 'attendance_dashboard' %}"
+            class="btn btn-outline-secondary btn-sm dark:text-gray-300 dark:border-gray-600">
+            &larr; Back to Dashboard
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0 dark:bg-gray-800 dark:border-gray-700">
+        <div
+            class="card-header bg-white dark:bg-gray-800 border-bottom dark:border-gray-700 py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 font-semibold dark:text-white">Student List</h5>
+            <div>
+                <button type="button"
+                    class="btn btn-sm btn-outline-success border-success text-success bg-success bg-opacity-10 dark:bg-opacity-20 hover:bg-success hover:text-white"
+                    onclick="toggleAll(true)">Mark All Present</button>
+                <button type="button"
+                    class="btn btn-sm btn-outline-danger border-danger text-danger bg-danger bg-opacity-10 dark:bg-opacity-20 hover:bg-danger hover:text-white ms-2"
+                    onclick="toggleAll(false)">Mark All Absent</button>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <form method="post" id="attendanceForm">
+                {% csrf_token %}
+                <ul class="list-group list-group-flush dark:border-gray-700">
+                    {% for record in records %}
+                    <li
+                        class="list-group-item d-flex justify-content-between align-items-center py-3 dark:bg-gray-800 dark:border-gray-700">
+                        <div class="d-flex align-items-center">
+                            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3 font-bold"
+                                style="width: 40px; height: 40px; font-size: 1.2rem;">
+                                {{ record.student.username|make_list|first|upper }}
+                            </div>
+                            <div>
+                                <h6 class="mb-0 font-semibold dark:text-gray-200">{{ record.student.username }}</h6>
+                                <small class="text-muted dark:text-gray-500">{{ record.student.email }}</small>
+                            </div>
+                        </div>
+                        <div class="form-check form-switch cursor-pointer transform scale-125">
+                            <input class="form-check-input attendance-checkbox shadow-sm cursor-pointer" type="checkbox"
+                                role="switch" name="present_students" value="{{ record.student.id }}"
+                                id="student_{{ record.student.id }}" {% if record.is_present %}checked{% endif %}>
+                            <label class="form-check-label d-none" for="student_{{ record.student.id }}">Present</label>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-center py-4 text-muted dark:text-gray-500 dark:bg-gray-800">
+                        No students enrolled in this course.
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                {% if records %}
+                <div class="p-4 bg-gray-50 dark:bg-gray-700/50 border-top dark:border-gray-700">
+                    <button type="submit"
+                        class="btn btn-primary bg-primary border-primary w-100 py-2 font-bold text-white shadow-sm hover:shadow-md transition">
+                        Save Attendance
+                    </button>
+                </div>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleAll(status) {
+        document.querySelectorAll('.attendance-checkbox').forEach(cb => {
+            cb.checked = status;
+        });
+    }
+</script>
+{% endblock %}

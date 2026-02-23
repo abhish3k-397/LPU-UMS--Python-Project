@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5 text-center">
+    <div class="card shadow-sm border-0 mx-auto" style="max-width: 500px;">
+        <div class="card-body py-5">
+            <svg class="mx-auto h-16 w-16 text-primary mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <h3 class="h4 font-bold text-gray-800 dark:text-white mb-3">Admin Restricted Area</h3>
+            <p class="text-gray-600 dark:text-gray-400 mb-4">
+                The Smart Attendance module front-end is designed specifically for <strong>Students</strong> (to view
+                attendance) and <strong>Faculty</strong> (to mark attendance).
+            </p>
+            <p class="text-sm text-gray-500 mb-4">
+                As an Administrator, please use the core Django Admin Panel to directly manage courses, sessions, and
+                edit attendance records.
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">Go to Dashboard</a>
+                <a href="/admin/attendance/" class="btn btn-primary">Open Admin Panel</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

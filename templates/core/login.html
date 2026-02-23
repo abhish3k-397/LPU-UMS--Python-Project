@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow-sm border-0 dark:bg-gray-800 dark:border-gray-700">
+            <div class="card-body p-4">
+                <h3 class="text-center mb-4 font-bold text-gray-900 dark:text-white">Login to LPU(UMS)</h3>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <div class="mb-3">
+                        <label class="form-label dark:text-gray-300">Username</label>
+                        <input type="text" name="username"
+                            class="form-control dark:bg-gray-700 dark:text-white dark:border-gray-600" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label dark:text-gray-300">Password</label>
+                        <input type="password" name="password"
+                            class="form-control dark:bg-gray-700 dark:text-white dark:border-gray-600" required>
+                    </div>
+                    <div class="d-grid mt-4">
+                        <button type="submit"
+                            class="btn btn-primary bg-primary border-primary hover:bg-orange-600">Login</button>
+                    </div>
+                </form>
+                <div class="text-center mt-3">
+                    <p class="text-sm dark:text-gray-400">Don't have an account? <a href="{% url 'register' %}"
+                            class="text-primary hover:underline">Register</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

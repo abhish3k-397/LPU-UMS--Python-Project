@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="h3 font-bold text-gray-800 dark:text-white">Make-Up Classes Dashboard</h2>
+            <p class="text-gray-600 dark:text-gray-400">Schedule remedial sessions and generate unique attendance codes.
+            </p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Add New Remedial Class -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 dark:bg-gray-800 dark:border-gray-700">
+                <div class="card-header bg-white dark:bg-gray-800 border-bottom dark:border-gray-700 py-3">
+                    <h5 class="mb-0 font-semibold dark:text-white">Schedule Session</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label text-sm dark:text-gray-300">Course</label>
+                            <select name="course"
+                                class="form-select text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                                required>
+                                <option value="">Select Course...</option>
+                                {% for course in courses %}
+                                <option value="{{ course.id }}">{{ course.code }} - {{ course.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label text-sm dark:text-gray-300">Date</label>
+                            <input type="date" name="date"
+                                class="form-control text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                                required>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label text-sm dark:text-gray-300">Start Time</label>
+                                <input type="time" name="start_time"
+                                    class="form-control text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                                    required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label text-sm dark:text-gray-300">End Time</label>
+                                <input type="time" name="end_time"
+                                    class="form-control text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600"
+                                    required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 bg-primary border-primary">Schedule
+                            Class</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scheduled Sessions -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 dark:bg-gray-800 dark:border-gray-700">
+                <div class="card-header bg-white dark:bg-gray-800 border-bottom dark:border-gray-700 py-3">
+                    <h5 class="mb-0 font-semibold dark:text-white">My Remedial Sessions</h5>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0 dark:table-dark align-middle">
+                        <thead class="bg-gray-50 dark:bg-gray-700">
+                            <tr>
+                                <th class="py-3 px-4 text-xs font-semibold uppercase text-gray-500 dark:text-gray-300">
+                                    Course</th>
+                                <th class="py-3 px-4 text-xs font-semibold uppercase text-gray-500 dark:text-gray-300">
+                                    Schedule</th>
+                                <th
+                                    class="py-3 px-4 text-xs font-semibold uppercase text-gray-500 dark:text-gray-300 text-center">
+                                    Remedial Code</th>
+                                <th class="py-3 px-4 text-xs font-semibold uppercase text-gray-500 dark:text-gray-300">
+                                    Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                            {% for session in sessions %}
+                            <tr class="dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                                <td class="py-3 px-4 dark:text-gray-300">
+                                    <strong class="dark:text-white">{{ session.course.code }}</strong>
+                                    <div class="text-xs text-muted dark:text-gray-400">{{ session.attendances.count }}
+                                        Attended</div>
+                                </td>
+                                <td class="py-3 px-4 dark:text-gray-300">
+                                    {{ session.date|date:"M d, Y" }}<br>
+                                    <span class="text-xs text-muted dark:text-gray-400">{{ session.start_time|time:"g:i
+                                        A" }} - {{ session.end_time|time:"g:i A" }}</span>
+                                </td>
+                                <td class="py-3 px-4 text-center">
+                                    <span
+                                        class="font-monospace fs-5 font-bold px-3 py-2 bg-light dark:bg-gray-900 border dark:border-gray-600 rounded d-inline-block tracking-wider">
+                                        {{ session.unique_code }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span
+                                            class="badge {% if session.is_active %}bg-success{% else %}bg-secondary{% endif %}">
+                                            {% if session.is_active %}Active{% else %}Closed{% endif %}
+                                        </span>
+                                        <a href="{% url 'toggle_session_status' session.id %}"
+                                            class="btn btn-xs btn-outline-secondary dark:text-gray-300 dark:border-gray-500"
+                                            title="Toggle Active Status">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                                                fill="currentColor" viewBox="0 0 16 16">
+                                                <path fill-rule="evenodd"
+                                                    d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16" />
+                                                <path
+                                                    d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted dark:text-gray-400">
+                                    You have not scheduled any remedial classes.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm border-0 dark:bg-gray-800 dark:border-gray-700">
+            <div class="card-body p-4">
+                <h3 class="text-center mb-4 font-bold text-gray-900 dark:text-white">Register for LPU(UMS)</h3>
+
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+
+                    <div class="mb-3">
+                        <label class="form-label dark:text-gray-300">Username</label>
+                        {{ form.username }}
+                        {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors }}</div>{%
+                        endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label dark:text-gray-300">Email Address</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors }}</div>{% endif
+                        %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label dark:text-gray-300">Role</label>
+                        {{ form.role }}
+                        <div class="form-text dark:text-gray-400">Select Student or Faculty. Admins can only be created
+                            via the superuser portal.</div>
+                        {% if form.role.errors %}<div class="text-danger small">{{ form.role.errors }}</div>{% endif %}
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <label class="form-label dark:text-gray-300">Password</label>
+                            {{ form.password }}
+                            {% if form.password.errors %}<div class="text-danger small">{{ form.password.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label dark:text-gray-300">Confirm Password</label>
+                            {{ form.confirm_password }}
+                            {% if form.confirm_password.errors %}
+                            <div class="text-danger small">
+                                {{ form.confirm_password.errors }}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit"
+                            class="btn btn-success bg-green-600 border-green-600 hover:bg-green-700">Submit
+                            Registration</button>
+                    </div>
+                </form>
+
+                <div class="text-center mt-3">
+                    <p class="text-sm dark:text-gray-400">Already have an account? <a href="{% url 'login' %}"
+                            class="text-primary hover:underline">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add simple class injects to make model form inputs look good with Bootstrap -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            if (input.type !== 'hidden' && input.type !== 'submit') {
+                input.classList.add('form-control', 'dark:bg-gray-700', 'dark:text-white', 'dark:border-gray-600');
+            }
+        });
+    });
+</script>
+{% endblock %}

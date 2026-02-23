@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-5">
+        <div class="col-12">
+            <h2 class="h3 font-black text-slate-800 dark:text-white tracking-tight">My Faculties</h2>
+            <p class="text-slate-500 dark:text-slate-400">View contact and course information for your instructors.</p>
+        </div>
+    </div>
+
+    <!-- Faculties Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for faculty, courses in faculty_data.items %}
+        <div
+            class="bg-white dark:!bg-slate-800 rounded-[2rem] p-6 shadow-md shadow-slate-200/50 dark:!shadow-none border border-slate-100 dark:!border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
+
+            <!-- Graphic Background -->
+            <div
+                class="absolute -right-12 -top-12 w-40 h-40 bg-purple-50 dark:!bg-purple-500/10 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-700 z-0">
+            </div>
+
+            <div class="relative z-10">
+                <!-- Profile Header -->
+                <div class="flex items-center gap-4 mb-6">
+                    <!-- Avatar -->
+                    <div
+                        class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white text-2xl font-black shadow-md border-4 border-white dark:!border-slate-800 shadow-purple-500/30">
+                        <span>
+                            {{ faculty.username|make_list|first|upper }}
+                        </span>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-white leading-tight">
+                            Prof. <span>{{ faculty.username }}</span>
+                        </h3>
+                        <p
+                            class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider mb-0 flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            </svg>
+                            <span>{{ faculty.email }}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Teaches Section -->
+                <div>
+                    <h4
+                        class="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-3 border-b border-slate-100 dark:!border-slate-700 pb-2">
+                        Subjects Taught</h4>
+                    <div class="space-y-2">
+                        {% for course in courses %}
+                        <div
+                            class="flex items-center gap-3 bg-slate-50 dark:!bg-slate-900/50 p-3 rounded-xl border border-slate-100 dark:!border-slate-700/80">
+                            <span
+                                class="bg-indigo-100 dark:!bg-indigo-500/20 text-indigo-700 dark:text-indigo-400 text-[10px] font-black px-2 py-1 rounded-lg tracking-wider">
+                                {{ course.code }}
+                            </span>
+                            <span class="text-sm font-bold text-slate-700 dark:text-slate-300">
+                                {{ course.name }}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Contact Button -->
+                <a href="mailto:{{ faculty.email }}"
+                    class="mt-6 flex items-center justify-center w-full py-3 px-4 bg-slate-100 dark:!bg-slate-700 text-slate-700 dark:text-white text-sm font-bold rounded-xl hover:bg-purple-600 hover:text-white dark:hover:!bg-purple-600 transition-colors group/btn no-underline border border-slate-200 dark:!border-slate-600 hover:border-transparent">
+                    <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                    </svg>
+                    Send Message
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <!-- Empty State -->
+        <div
+            class="col-span-full bg-white dark:!bg-slate-800 rounded-[2rem] p-12 text-center shadow-sm border border-slate-200 dark:!border-slate-700">
+            <div
+                class="w-24 h-24 bg-slate-100 dark:!bg-slate-700 rounded-3xl flex items-center justify-center mx-auto mb-6 transform -rotate-6">
+                <span class="text-4xl">👨‍🏫</span>
+            </div>
+            <h4 class="text-2xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">No Faculties Found</h4>
+            <p class="text-slate-500 dark:text-slate-400 max-w-md mx-auto">You are not currently assigned to any
+                instructors for this semester.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

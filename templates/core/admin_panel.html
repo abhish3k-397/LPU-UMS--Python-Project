@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="h3 font-bold text-gray-800 dark:text-white">User Management Panel</h2>
+            <p class="text-gray-600 dark:text-gray-400">Review, approve, and manage user accounts.</p>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="card shadow-sm border-0 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
+        <div
+            class="card-header bg-white dark:bg-gray-800 border-bottom dark:border-gray-700 py-3 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 font-semibold dark:text-white">Registered Users</h5>
+            <span class="badge bg-primary">{{ users.count }} Total</span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 dark:table-dark align-middle">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            Username</th>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            Email</th>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            Role</th>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            Status</th>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            Joined</th>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300 text-end">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    {% for u in users %}
+                    <tr class="dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                        <td class="py-3 px-4 dark:text-gray-300 font-semibold">{{ u.username }}</td>
+                        <td class="py-3 px-4 dark:text-gray-300">{{ u.email }}</td>
+                        <td class="py-3 px-4 dark:text-gray-300">
+                            {% if u.role == 'ADMIN' %}
+                            <span class="badge bg-danger text-white">Admin</span>
+                            {% elif u.role == 'FACULTY' %}
+                            <span class="badge bg-primary text-white">Faculty</span>
+                            {% else %}
+                            <span class="badge bg-secondary text-white">Student</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4 dark:text-gray-300">
+                            {% if u.is_approved %}
+                            <span
+                                class="badge bg-success bg-opacity-25 text-success border border-success">Approved</span>
+                            {% else %}
+                            <span
+                                class="badge bg-warning bg-opacity-25 text-warning border border-warning">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4 dark:text-gray-300 text-sm">{{ u.date_joined|date:"M d, Y" }}</td>
+                        <td class="py-3 px-4 text-end">
+                            <div class="d-flex justify-content-end gap-2">
+                                {% if not u.is_approved %}
+                                <form method="post" action="{% url 'approve_user' u.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                                </form>
+                                {% endif %}
+
+                                {% if u != user %}
+                                <form method="post" action="{% url 'delete_user' u.id %}"
+                                    onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-5 text-muted dark:text-gray-400">
+                            No users found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

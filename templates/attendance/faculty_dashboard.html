@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="h3 font-bold text-gray-800 dark:text-white">Faculty Attendance Dashboard</h2>
+            <p class="text-gray-600 dark:text-gray-400">Manage your assigned courses and take attendance.</p>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for course in courses %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm border-0 dark:bg-gray-800 dark:border-gray-700 hover:shadow-md transition">
+                <div class="card-body">
+                    <h5 class="card-title font-bold text-lg dark:text-white mb-1">{{ course.code }}</h5>
+                    <h6 class="card-subtitle mb-3 text-muted dark:text-gray-400">{{ course.name }}</h6>
+                    <p class="card-text text-sm dark:text-gray-300">
+                        Enrolled Students: <span class="badge bg-secondary">{{ course.students.count }}</span>
+                    </p>
+
+                    <div class="mt-4">
+                        <form action="{% url 'create_session' course.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit"
+                                class="btn btn-primary bg-primary border-primary w-100 text-white">Start Today's
+                                Session</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="card-footer bg-white dark:bg-gray-800 border-t dark:border-gray-700">
+                    <small class="text-muted dark:text-gray-400">Past sessions can be viewed below.</small>
+                    <ul class="mt-2 list-unstyled mb-0">
+                        {% for session in course.attendancesession_set.all|slice:":3" %}
+                        <li class="border-bottom py-1 dark:border-gray-700">
+                            <a href="{% url 'mark_attendance' session.id %}"
+                                class="text-decoration-none d-flex justify-content-between text-sm hover:underline dark:text-gray-300">
+                                <span>{{ session.date }}</span>
+                                <span class="text-muted dark:text-gray-500">Edit -></span>
+                            </a>
+                        </li>
+                        {% empty %}
+                        <li class="text-sm text-muted dark:text-gray-500">No sessions yet.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info border-0 shadow-sm" role="alert">
+                You currently have no courses assigned to you. Contact the administrator.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-10">
+    <div class="col-12 px-lg-4">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-4xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">
+                    Examination Schedule
+                </h2>
+                <p class="text-slate-500 dark:text-slate-400 font-medium">
+                    View exam dates, download syllabi, and access study resources.
+                </p>
+            </div>
+            <div class="flex items-center gap-4">
+                {% if user.role == 'FACULTY' or user.role == 'ADMIN' %}
+                <a href="{% url 'create_exam' %}"
+                    class="bg-slate-800 dark:bg-blue-600 hover:bg-slate-900 dark:hover:bg-blue-700 text-white font-black py-3 px-6 rounded-2xl transition-all shadow-lg shadow-blue-500/20 no-underline text-xs uppercase tracking-widest flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Schedule Exam
+                </a>
+                {% endif %}
+                <div class="hidden md:block">
+                    <div
+                        class="bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 p-4 rounded-2xl border border-blue-100 dark:border-blue-500/20 flex items-center gap-3">
+                        <span class="text-2xl">🗓️</span>
+                        <div>
+                            <p class="text-[10px] font-black uppercase tracking-widest leading-none mb-1">Current Term
+                            </p>
+                            <p class="text-sm font-bold leading-none">Spring Session 2026</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row px-lg-4 pb-12">
+        <div class="col-12">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {% for exam in exams %}
+                <div
+                    class="group bg-white dark:!bg-slate-800 rounded-[2.5rem] p-8 shadow-sm hover:shadow-2xl hover:shadow-blue-500/10 transition-all duration-500 border border-slate-100 dark:!border-slate-700/50 relative overflow-hidden flex flex-col h-full transform hover:-translate-y-2">
+                    <!-- Status Background Glow -->
+                    <div
+                        class="absolute -right-20 -top-20 w-64 h-64 bg-gradient-to-br from-blue-500/5 to-transparent rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                    </div>
+
+                    <div class="flex justify-between items-start mb-6 relative z-10">
+                        <div>
+                            <span
+                                class="inline-block px-4 py-1.5 bg-blue-100 dark:!bg-blue-500/20 text-blue-600 dark:!text-blue-400 text-[10px] font-black rounded-full mb-3 uppercase tracking-widest border border-blue-200 dark:!border-blue-500/30">
+                                {{ exam.course.code }}
+                            </span>
+                            <h3
+                                class="text-2xl font-bold text-slate-800 dark:text-white leading-tight mb-2 group-hover:text-blue-500 transition-colors">
+                                {{ exam.course.name }}
+                            </h3>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 mb-8 relative z-10 flex-grow">
+                        <!-- Exam Type & Date -->
+                        <div
+                            class="flex items-center gap-4 p-4 bg-slate-50 dark:!bg-slate-900/50 rounded-2xl border border-slate-100 dark:!border-slate-700/50">
+                            <div
+                                class="w-12 h-12 bg-white dark:!bg-slate-800 rounded-xl flex items-center justify-center text-xl shadow-sm border border-slate-200 dark:!border-slate-700">
+                                📝
+                            </div>
+                            <div>
+                                <p
+                                    class="text-[10px] text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest mb-0.5">
+                                    {{ exam.get_exam_type_display }}</p>
+                                <p class="font-bold text-slate-700 dark:text-slate-200">
+                                    {{ exam.date|date:"F d, Y @ g:i A" }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Instructor -->
+                        <div class="flex items-center gap-4 px-2">
+                            <div
+                                class="w-10 h-10 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center font-bold text-slate-500 dark:text-slate-400">
+                                {{ exam.course.faculty.username|make_list|first|upper }}
+                            </div>
+                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
+                                Invigilator: <span class="text-slate-700 dark:text-slate-200 font-bold">Prof.
+                                    {{ exam.course.faculty.username }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="grid grid-cols-2 gap-3 relative z-10 mt-auto">
+                        {% if exam.syllabus %}
+                        <a href="{{ exam.syllabus.url }}"
+                            class="flex items-center justify-center gap-2 bg-slate-800 dark:bg-slate-700 hover:bg-slate-900 dark:hover:bg-slate-600 text-white font-bold py-3.5 rounded-2xl transition-all shadow-lg shadow-slate-900/10 no-underline text-sm uppercase tracking-wide">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            Syllabus
+                        </a>
+                        {% else %}
+                        <button disabled
+                            class="flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 font-bold py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 cursor-not-allowed text-sm uppercase tracking-wide">
+                            No Syllabus
+                        </button>
+                        {% endif %}
+
+                        {% if exam.resources %}
+                        <a href="{{ exam.resources.url }}"
+                            class="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-2xl transition-all shadow-lg shadow-blue-600/20 no-underline text-sm uppercase tracking-wide">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                            Resources
+                        </a>
+                        {% else %}
+                        <button disabled
+                            class="flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-600 font-bold py-3.5 rounded-2xl border border-slate-200 dark:border-slate-700 cursor-not-allowed text-sm uppercase tracking-wide">
+                            No Prep
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full py-24 text-center">
+                    <div
+                        class="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-6 text-5xl">
+                        😴
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-700 dark:text-slate-300 mb-2">No Exams Scheduled</h3>
+                    <p class="text-slate-500 dark:text-slate-400">Enjoy your studies! Scheduled exams will appear here
+                        automatically.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endblock %}

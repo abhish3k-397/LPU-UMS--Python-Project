@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h2 class="h3 font-bold text-gray-800 dark:text-white">Campus Resource Estimates</h2>
+            <p class="text-gray-600 dark:text-gray-400">Administration overview of facility usage and faculty
+                assignments.</p>
+        </div>
+    </div>
+
+    <!-- Overview Stats -->
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-white/80">Overall Capacity Utilization</h5>
+                    <h2 class="display-5 font-bold mb-0">{{ utilization_percentage }}%</h2>
+                    <p class="mt-2 mb-0">{{ total_students }} active students / {{ total_uni_capacity }} total seats</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0 dark:bg-gray-800 dark:border-gray-700 h-100">
+                <div class="card-body">
+                    <h5 class="card-title font-semibold mb-3 dark:text-gray-200">Campus Blocks Utilization</h5>
+                    <div class="row g-3">
+                        {% for block in blocks %}
+                        <div class="col-sm-6">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-sm dark:text-gray-300">{{ block.name }}</span>
+                                <span class="text-sm font-bold dark:text-white">{{ block.total_capacity }} seats</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-info" role="progressbar" style="width: 100%;"></div>
+                            </div>
+                            <small class="text-muted dark:text-gray-500">{{ block.total_classrooms }} Classrooms</small>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted text-sm dark:text-gray-500">No campus blocks defined yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Faculty Workload -->
+    <h4 class="h5 font-bold text-gray-800 dark:text-white mb-3">Faculty Workload Distribution</h4>
+    <div class="card shadow-sm border-0 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 dark:table-dark align-middle">
+                <thead class="bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            Faculty Member</th>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            Assigned Courses</th>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            Total Students Taught</th>
+                        <th
+                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            Workload Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    {% for item in workload_data %}
+                    <tr class="dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                        <td class="py-3 px-4 dark:text-gray-300">
+                            <strong>{{ item.faculty.username }}</strong>
+                            <br>
+                            <span class="text-muted text-xs">{{ item.faculty.email }}</span>
+                        </td>
+                        <td class="py-3 px-4 dark:text-gray-300">{{ item.course_count }} Courses</td>
+                        <td class="py-3 px-4 dark:text-gray-300 font-bold">{{ item.total_students }}</td>
+                        <td class="py-3 px-4">
+                            {% if item.total_students > 100 %}
+                            <span class="badge bg-danger">Heavy Load</span>
+                            {% elif item.total_students > 40 %}
+                            <span class="badge bg-warning text-dark">Moderate Load</span>
+                            {% else %}
+                            <span class="badge bg-success">Optimal</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5 text-muted dark:text-gray-400">
+                            No faculty assignment data available.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

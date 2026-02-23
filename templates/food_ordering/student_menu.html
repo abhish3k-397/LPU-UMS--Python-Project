@@ -1,0 +1,427 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Remove max-width container to utilize full width for sidebar layout -->
+<div class="container-fluid py-4 min-h-[calc(100vh-80px)]" x-data="foodCart()">
+
+    <!-- Header -->
+    <div class="row mb-6 px-lg-4">
+        <div class="col-12 flex justify-between items-end">
+            <div>
+                <h2 class="h2 font-black text-slate-800 dark:!text-white mb-2 tracking-tight">Campus Dining</h2>
+                <p class="text-slate-500 dark:!text-slate-400 font-medium">Order fresh, delicious meals and skip the
+                    lines.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row px-lg-4 pb-12">
+        <!-- Main Food Grid -->
+        <div class="col-lg-8 col-xl-9 pr-lg-5 transition-all duration-300">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {% for item in items %}
+                <div
+                    class="bg-white dark:!bg-slate-800 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl hover:shadow-orange-500/10 dark:hover:!shadow-orange-500/5 hover:-translate-y-1 border border-slate-100 dark:!border-slate-700/50 transition-all duration-300 group flex flex-col h-full">
+
+                    <!-- Dish Image Base -->
+                    <div class="relative h-48 w-full bg-slate-100 dark:!bg-slate-700 overflow-hidden">
+                        {% if item.image %}
+                        <img src="{{ item.image.url }}" alt="{{ item.name }}"
+                            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        {% else %}
+                        <div class="w-full h-full flex items-center justify-center text-5xl">🍔</div>
+                        {% endif %}
+                        <!-- Price Tag overlay -->
+                        <div
+                            class="absolute top-4 right-4 bg-white/90 dark:!bg-slate-900/90 backdrop-blur text-slate-900 dark:!text-white font-black px-4 py-2 rounded-2xl shadow-sm border border-white/20 dark:!border-slate-700">
+                            ₹{{ item.price }}
+                        </div>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="p-6 flex-grow flex flex-col">
+                        <h3 class="text-xl font-bold text-slate-800 dark:!text-white mb-2 leading-tight">
+                            {{ item.name }}
+                        </h3>
+                        <p class="text-sm text-slate-500 dark:!text-slate-400 mb-6 flex-grow">
+                            {{ item.description }}
+                        </p>
+
+                        <!-- Add to Cart Button Action -->
+                        <button data-item-id="{{ item.id }}" data-item-name="{{ item.name }}"
+                            data-item-price="{{ item.price }}"
+                            @click="addToCart($el.dataset.itemId, $el.dataset.itemName, $el.dataset.itemPrice)"
+                            class="w-full mt-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-3.5 px-4 rounded-xl transition-colors flex items-center justify-center gap-2 group/btn shadow-md shadow-orange-500/20">
+                            <span>Add to Order</span>
+                            <svg class="w-5 h-5 group-hover/btn:scale-110 transition-transform" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full py-16 text-center">
+                    <div class="text-6xl mb-4">🍽️</div>
+                    <h3 class="text-2xl font-bold text-slate-700 dark:!text-slate-300">Menu Currently Unavailable</h3>
+                    <p class="text-slate-500 dark:!text-slate-400">Please check back later for delicious options.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- My Orders Section under the grid -->
+            <div
+                class="mt-12 bg-white dark:!bg-slate-800 rounded-[2rem] p-6 lg:p-8 shadow-sm border border-slate-100 dark:!border-slate-700/50">
+                <h4
+                    class="text-xl font-bold text-slate-800 dark:!text-white mb-6 tracking-tight flex items-center gap-3">
+                    <span
+                        class="bg-indigo-100 dark:!bg-indigo-500/20 text-indigo-600 text-sm w-8 h-8 rounded-lg flex items-center justify-center">🕒</span>
+                    My Orders Today
+                </h4>
+
+                <div class="space-y-6">
+                    {% for order in my_orders %}
+                    <div
+                        class="bg-slate-50 dark:!bg-slate-900/50 rounded-3xl border border-slate-100 dark:!border-slate-700/50 overflow-hidden shadow-sm">
+                        <!-- Receipt Header -->
+                        <div
+                            class="p-5 flex items-center justify-between border-b border-slate-100 dark:!border-slate-700/50 bg-white/50 dark:!bg-slate-800/50">
+                            <div>
+                                <div class="flex items-center gap-3 mb-1">
+                                    <h5 class="font-black text-slate-800 dark:!text-white tracking-tight">
+                                        Receipt #{{ order.id }}
+                                    </h5>
+                                    <span class="text-xs font-bold text-slate-400 dark:!text-slate-500">•
+                                        {{ order.created_at|time:"g:i A" }}
+                                    </span>
+                                </div>
+                                <div
+                                    class="flex items-center gap-2 text-xs font-bold text-slate-500 dark:!text-slate-400 uppercase tracking-widest">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Pickup: {{ order.time_slot.start_time|time:"g:i A" }}
+                                </div>
+                            </div>
+
+                            <!-- Status Badge -->
+                            <div>
+                                {% if order.status == 'PENDING' %}
+                                <span
+                                    class="px-4 py-2 rounded-xl text-xs font-black tracking-wider uppercase inline-flex items-center gap-2 bg-amber-100 text-amber-700 dark:!bg-amber-500/20 dark:!text-amber-400">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                    {{ order.get_status_display }}
+                                </span>
+                                {% elif order.status == 'PREPARING' %}
+                                <span
+                                    class="px-4 py-2 rounded-xl text-xs font-black tracking-wider uppercase inline-flex items-center gap-2 bg-blue-100 text-blue-700 dark:!bg-blue-500/20 dark:!text-blue-400">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                    {{ order.get_status_display }}
+                                </span>
+                                {% elif order.status == 'READY' %}
+                                <span
+                                    class="px-4 py-2 rounded-xl text-xs font-black tracking-wider uppercase inline-flex items-center gap-2 bg-emerald-100 text-emerald-700 dark:!bg-emerald-500/20 dark:!text-emerald-400">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    {{ order.get_status_display }}
+                                </span>
+                                {% else %}
+                                <span
+                                    class="px-4 py-2 rounded-xl text-xs font-black tracking-wider uppercase inline-flex items-center gap-2 bg-slate-100 text-slate-700 dark:!bg-slate-700 dark:!text-slate-300">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
+                                    {{ order.get_status_display }}
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Itemized List -->
+                        <div class="px-5 py-4 space-y-4">
+                            {% for order_item in order.items.all %}
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-10 h-10 rounded-xl bg-white dark:!bg-slate-800 border border-slate-100 dark:!border-slate-700/50 flex items-center justify-center shadow-sm overflow-hidden">
+                                        {% if order_item.item.image %}
+                                        <img src="{{ order_item.item.image.url }}" class="w-full h-full object-cover">
+                                        {% else %}
+                                        <span class="text-xl">🍔</span>
+                                        {% endif %}
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-slate-700 dark:!text-slate-200 text-sm">
+                                            {{ order_item.quantity }}x
+                                            {{ order_item.item.name }}
+                                        </p>
+                                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                                            ₹{{ order_item.item.price }} each
+                                        </p>
+                                    </div>
+                                </div>
+                                <span class="font-black text-slate-600 dark:!text-slate-400 text-sm">
+                                    ₹{{ order_item.total_item_price }}
+                                </span>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Receipt Footer / Total -->
+                        <div
+                            class="px-5 py-4 bg-slate-100/50 dark:!bg-slate-900/80 border-t border-slate-100 dark:!border-slate-700/50 flex justify-between items-center">
+                            <span
+                                class="text-xs font-bold text-slate-400 dark:!text-slate-500 uppercase tracking-widest">
+                                Total Paid
+                            </span>
+                            <span class="text-lg font-black text-orange-500">
+                                ₹
+                                {{ order.total_price }}
+                            </span>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-12 px-6">
+                        <div
+                            class="w-20 h-20 bg-slate-100 dark:!bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                            📭</div>
+                        <h4 class="text-lg font-bold text-slate-700 dark:!text-slate-300">No Orders Today</h4>
+                        <p class="text-sm text-slate-500 dark:!text-slate-400 mt-1">Your delicious history will appear
+                            here.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sticky Shopping Cart Sidebar -->
+        <div class="col-lg-4 col-xl-3 mt-8 lg:mt-0 relative">
+            <div
+                class="bg-white dark:!bg-slate-800 rounded-[2.5rem] p-6 lg:p-8 shadow-xl shadow-slate-200/50 dark:!shadow-none border border-slate-100 dark:!border-slate-700 sticky top-24 z-20 flex flex-col max-h-[calc(100vh-120px)] overflow-hidden">
+
+                <div class="flex items-center justify-between mb-8">
+                    <h3
+                        class="text-2xl font-black text-slate-800 dark:!text-white tracking-tight flex items-center gap-3">
+                        <span class="text-3xl">🛒</span>
+                        Your Tray
+                    </h3>
+
+                    <!-- Item Count Badge -->
+                    <div x-show="totalItems > 0" x-transition
+                        class="bg-orange-500 text-white font-bold w-8 h-8 rounded-full flex items-center justify-center text-sm shadow-md">
+                        <span x-text="totalItems"></span>
+                    </div>
+                </div>
+
+                <!-- Empty Cart State -->
+                <div x-show="cart.length === 0"
+                    class="flex-grow flex flex-col items-center justify-center py-10 opacity-60">
+                    <div class="w-24 h-24 mb-4 text-slate-300 dark:!text-slate-600">
+                        <svg fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20.42 3H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z" />
+                        </svg>
+                    </div>
+                    <p class="text-slate-500 font-medium text-center">Your tray is empty.<br>Add some delicious food!
+                    </p>
+                </div>
+
+                <!-- Cart Items List (Scrollable) -->
+                <div x-show="cart.length > 0"
+                    class="flex-grow overflow-y-auto pr-2 -mr-2 space-y-4 mb-6 custom-scrollbar">
+                    <template x-for="(item, index) in cart" :key="item.id">
+                        <div
+                            class="flex items-center gap-3 py-3 border-b border-slate-100 dark:!border-slate-700/50 last:border-0 last:pb-0">
+                            <!-- Quantity Controls -->
+                            <div
+                                class="flex flex-col items-center justify-between h-20 w-8 bg-slate-50 dark:!bg-slate-900/50 rounded-xl py-1">
+                                <button @click="incrementItem(index)"
+                                    class="text-slate-400 hover:text-orange-500 transition-colors w-full flex justify-center">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                            d="M5 15l7-7 7 7" />
+                                    </svg>
+                                </button>
+                                <span class="font-bold text-slate-700 dark:!text-slate-200 text-sm"
+                                    x-text="item.quantity"></span>
+                                <button @click="decrementItem(index)"
+                                    class="text-slate-400 hover:text-orange-500 transition-colors w-full flex justify-center">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                            d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                </button>
+                            </div>
+
+                            <!-- Item Info -->
+                            <div class="flex-grow">
+                                <h4 class="font-bold text-slate-800 dark:!text-white text-sm mb-1 leading-tight line-clamp-2"
+                                    x-text="item.name"></h4>
+                                <p class="text-orange-500 font-bold text-sm">₹<span
+                                        x-text="(item.price * item.quantity).toFixed(2)"></span></p>
+                            </div>
+
+                            <!-- Remove Button -->
+                            <button @click="removeItem(index)"
+                                class="w-8 h-8 rounded-full bg-red-50 hover:bg-red-100 dark:!bg-red-500/10 dark:hover:!bg-red-500/20 text-red-500 flex items-center justify-center transition-colors shrink-0">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Checkout Section -->
+                <div x-show="cart.length > 0"
+                    class="pt-6 border-t-2 border-dashed border-slate-200 dark:!border-slate-700 mt-auto">
+
+                    <div class="flex justify-between items-end mb-6">
+                        <span
+                            class="text-slate-500 dark:!text-slate-400 font-bold uppercase tracking-wider text-xs">Grand
+                            Total</span>
+                        <span class="text-3xl font-black text-slate-800 dark:!text-white">₹<span
+                                x-text="cartTotal.toFixed(2)"></span></span>
+                    </div>
+
+                    <!-- Pickup Time Selection -->
+                    <div class="mb-6">
+                        <label
+                            class="block text-xs font-bold text-slate-500 dark:!text-slate-400 uppercase tracking-wider mb-2">Schedule
+                            Pickup</label>
+                        <select x-model="selectedTimeSlot"
+                            class="w-full bg-slate-50 dark:!bg-slate-900 border border-slate-200 dark:!border-slate-700 text-slate-700 dark:!text-white py-3 px-4 rounded-xl font-medium focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-all">
+                            <option value="">Select Time Slot...</option>
+                            {% for slot in time_slots %}
+                            <option value="{{ slot.id }}">
+                                {{ slot.start_time|time:"g:i A" }} - {{ slot.end_time|time:"g:i A" }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <button @click="checkout" :disabled="isSubmitting || cart.length === 0 || !selectedTimeSlot"
+                        class="w-full bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black py-4 px-6 rounded-2xl transition-all duration-300 shadow-lg shadow-orange-500/30 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 group/btn">
+                        <span x-text="isSubmitting ? 'Processing...' : 'Place Order'"></span>
+                        <svg x-show="!isSubmitting" class="w-5 h-5 group-hover/btn:translate-x-1 transition-transform"
+                            fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        </svg>
+                    </button>
+                    <!-- Error Message Display -->
+                    <p x-show="errorMessage" x-transition class="text-red-500 text-xs font-bold mt-3 text-center"
+                        x-text="errorMessage"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Alpine.js for Cart Logic -->
+<script src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js" defer></script>
+<style>
+    /* Custom scrollbar for cart */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 20px;
+    }
+
+    .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #475569;
+    }
+</style>
+
+<script>
+    function foodCart() {
+        return {
+            cart: [],
+            selectedTimeSlot: "",
+            isSubmitting: false,
+            errorMessage: "",
+
+            get totalItems() {
+                return this.cart.reduce((total, item) => total + item.quantity, 0);
+            },
+
+            get cartTotal() {
+                return this.cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+            },
+
+            addToCart(id, name, price) {
+                this.errorMessage = "";
+                const existingItem = this.cart.find(item => item.id === id);
+                if (existingItem) {
+                    if (existingItem.quantity < 10) existingItem.quantity++;
+                } else {
+                    this.cart.push({ id, name, price: parseFloat(price), quantity: 1 });
+                }
+            },
+
+            incrementItem(index) {
+                if (this.cart[index].quantity < 10) this.cart[index].quantity++;
+            },
+
+            decrementItem(index) {
+                if (this.cart[index].quantity > 1) {
+                    this.cart[index].quantity--;
+                } else {
+                    this.removeItem(index);
+                }
+            },
+
+            removeItem(index) {
+                this.cart.splice(index, 1);
+            },
+
+            async checkout() {
+                if (!this.selectedTimeSlot) {
+                    this.errorMessage = "Please select a pickup time slot.";
+                    return;
+                }
+
+                this.isSubmitting = true;
+                this.errorMessage = "";
+
+                const payload = {
+                    time_slot_id: this.selectedTimeSlot,
+                    items: this.cart.map(item => ({
+                        item_id: item.id,
+                        quantity: item.quantity
+                    }))
+                };
+
+                try {
+                    const response = await fetch("{% url 'student_menu' %}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        // Success - reload page to show updated orders and clear flash messages using Django
+                        window.location.reload();
+                    } else {
+                        throw new Error('Server returned an error');
+                    }
+                } catch (error) {
+                    console.error("Checkout error:", error);
+                    this.errorMessage = "Failed to place order. Please try again.";
+                    this.isSubmitting = false;
+                }
+            }
+        }
+    }
+</script>
+{% endblock %}

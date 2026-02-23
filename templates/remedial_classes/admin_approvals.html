@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-8">
+    <div class="col-12">
+        <div class="flex items-center gap-3 mb-2">
+            <h2 class="text-3xl font-black tracking-tight text-slate-800 dark:text-white">Make-Up Class Proposals</h2>
+            <span
+                class="bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-400 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-widerborder border-indigo-200 dark:border-indigo-500/30">
+                Action Required
+            </span>
+        </div>
+        <p class="text-slate-500 dark:text-slate-400">Review and approve out-of-schedule class sessions proposed by
+            faculty.</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
+                            <th
+                                class="py-4 px-6 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                Course</th>
+                            <th
+                                class="py-4 px-6 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                Proposed By</th>
+                            <th
+                                class="py-4 px-6 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                Schedule</th>
+                            <th
+                                class="py-4 px-6 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                Status</th>
+                            <th
+                                class="py-4 px-6 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                        {% for session in proposals %}
+                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/20 transition-colors group">
+                            <!-- Course Info -->
+                            <td class="py-4 px-6 align-top">
+                                <div class="font-bold text-slate-800 dark:text-white mb-1">{{ session.course.code }}
+                                </div>
+                                <div class="text-sm font-semibold text-indigo-600 dark:text-indigo-400">
+                                    {{ session.course.name }}
+                                </div>
+                            </td>
+
+                            <!-- Faculty Info -->
+                            <td class="py-4 px-6 align-top">
+                                <div class="flex items-center gap-2">
+                                    <div
+                                        class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-600 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-200">
+                                        {{ session.faculty.username|make_list|first|upper }}
+                                    </div>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{
+                                        session.faculty.username }}</span>
+                                </div>
+                            </td>
+
+                            <!-- Schedule -->
+                            <td class="py-4 px-6 align-top">
+                                <div class="flex items-center gap-2 mb-1">
+                                    <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    <span class="text-sm font-semibold text-slate-700 dark:text-slate-300">{{
+                                        session.date|date:"l, M d, Y" }}</span>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span class="text-xs text-slate-500 dark:text-slate-400">{{
+                                        session.start_time|time:"g:i A" }} - {{ session.end_time|time:"g:i A" }}</span>
+                                </div>
+                            </td>
+
+                            <!-- Status -->
+                            <td class="py-4 px-6 align-top">
+                                <span
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-amber-100 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400 text-xs font-bold border border-amber-200 dark:border-amber-500/20">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                    PENDING
+                                </span>
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="py-4 px-6 align-top text-right">
+                                <form method="post" class="inline-flex gap-2 m-0">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="session_id" value="{{ session.id }}">
+
+                                    <button type="submit" name="action" value="reject"
+                                        class="btn btn-sm px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300 dark:hover:bg-rose-500/10 dark:hover:text-rose-400 dark:hover:border-rose-500/30 transition-all shadow-sm rounded-lg"
+                                        title="Reject Proposal">
+                                        Reject
+                                    </button>
+
+                                    <button type="submit" name="action" value="approve"
+                                        class="btn btn-sm px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 border-none shadow-md shadow-indigo-500/20 transition-all rounded-lg"
+                                        title="Approve Proposal">
+                                        Approve
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="py-12 px-6 text-center">
+                                <div
+                                    class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 mb-4 border border-slate-200 dark:border-slate-700">
+                                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                    </svg>
+                                </div>
+                                <h4 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Caught Up!</h4>
+                                <p class="text-slate-500 dark:text-slate-400 text-sm max-w-sm mx-auto">There are
+                                    currently no pending make-up class proposals from faculty members. You're all clear.
+                                </p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

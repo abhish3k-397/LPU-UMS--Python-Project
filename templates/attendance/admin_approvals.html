@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-8">
+    <div class="col-12">
+        <div class="flex items-center gap-3 mb-2">
+            <h2 class="text-3xl font-black tracking-tight text-slate-800 dark:text-white">Attendance Rectifications</h2>
+            <span
+                class="bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-widerborder border-amber-200 dark:border-amber-500/30">
+                Action Required
+            </span>
+        </div>
+        <p class="text-slate-500 dark:text-slate-400">Review and process attendance edits submitted by faculty members.
+        </p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div
+            class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
+                            <th
+                                class="py-4 px-6 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                Student & Target Session</th>
+                            <th
+                                class="py-4 px-6 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                Requested By</th>
+                            <th
+                                class="py-4 px-6 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                Reason</th>
+                            <th
+                                class="py-4 px-6 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                                Proposed Status</th>
+                            <th
+                                class="py-4 px-6 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700">
+                        {% for req in requests %}
+                        <tr class="hover:bg-slate-50/50 dark:hover:bg-slate-700/20 transition-colors group">
+                            <!-- Session Info -->
+                            <td class="py-4 px-6 align-top">
+                                <div class="font-bold text-slate-800 dark:text-white mb-1">{{ req.student.username }}
+                                </div>
+                                <div class="text-sm font-semibold text-orange-600 dark:text-orange-400 mb-0.5">
+                                    {{ req.session.course.code }} - {{ req.session.course.name }}
+                                </div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400">
+                                    Session Date: {{ req.session.date|date:"M d, Y" }}
+                                </div>
+                            </td>
+
+                            <!-- Faculty Info -->
+                            <td class="py-4 px-6 align-top">
+                                <div class="flex items-center gap-2">
+                                    <div
+                                        class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-600 flex items-center justify-center text-xs font-bold text-slate-600 dark:text-slate-200">
+                                        {{ req.faculty.username|make_list|first|upper }}
+                                    </div>
+                                    <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{
+                                        req.faculty.username }}</span>
+                                </div>
+                                <div class="text-xs text-slate-400 dark:text-slate-500 mt-1.5">{{ req.created_at|date:"M
+                                    d, P" }}</div>
+                            </td>
+
+                            <!-- Reason -->
+                            <td class="py-4 px-6 align-top">
+                                <p class="text-sm text-slate-600 dark:text-slate-400 max-w-xs line-clamp-3 group-hover:line-clamp-none transition-all"
+                                    title="{{ req.reason }}">
+                                    "{{ req.reason }}"
+                                </p>
+                            </td>
+
+                            <!-- Proposed Status -->
+                            <td class="py-4 px-6 align-top">
+                                {% if req.requested_is_present %}
+                                <span
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400 text-xs font-bold border border-emerald-200 dark:border-emerald-500/20">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                            d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    PRESENT
+                                </span>
+                                {% else %}
+                                <span
+                                    class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-100 text-rose-700 dark:bg-rose-500/10 dark:text-rose-400 text-xs font-bold border border-rose-200 dark:border-rose-500/20">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    ABSENT
+                                </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="py-4 px-6 align-top text-right">
+                                <form method="post" class="inline-flex gap-2 m-0">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="request_id" value="{{ req.id }}">
+
+                                    <button type="submit" name="action" value="reject"
+                                        class="btn btn-sm px-3 py-1.5 text-xs font-bold text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300 dark:hover:bg-rose-500/10 dark:hover:text-rose-400 dark:hover:border-rose-500/30 transition-all shadow-sm rounded-lg"
+                                        title="Reject Request">
+                                        Reject
+                                    </button>
+
+                                    <button type="submit" name="action" value="approve"
+                                        class="btn btn-sm px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 border-none shadow-md shadow-emerald-500/20 transition-all rounded-lg"
+                                        title="Approve Request">
+                                        Approve
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="py-12 px-6 text-center">
+                                <div
+                                    class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 mb-4 border border-slate-200 dark:border-slate-700">
+                                    <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <h4 class="text-lg font-bold text-slate-800 dark:text-white mb-2">Caught Up!</h4>
+                                <p class="text-slate-500 dark:text-slate-400 text-sm max-w-sm mx-auto">There are
+                                    currently no pending attendance edit requests from faculty members. You're all
+                                    clear.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
