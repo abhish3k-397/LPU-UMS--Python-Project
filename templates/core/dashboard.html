@@ -143,52 +143,54 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Attendance Hub -->
             <a href="{% url 'request_edit' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-indigo-600 p-8 shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all duration-300 hover:-translate-y-1">
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-indigo-500/10 hover:shadow-indigo-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-indigo-600">
                 <div
-                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
                             d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
                             clip-rule="evenodd"></path>
                     </svg>
                 </div>
-                <div class="relative z-10 text-white">
+                <div class="relative z-10 text-slate-800 dark:text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        class="w-14 h-14 bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-indigo-100 dark:border-indigo-500/20 group-hover:scale-110 transition-transform">
                         📅</div>
                     <h4 class="text-2xl font-black mb-1 tracking-tight">Attendance Edit</h4>
-                    <p class="text-indigo-100 text-sm font-medium opacity-90 m-0">Review edit requests and authorize
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">Review edit requests and
+                        authorize
                         changes.</p>
                 </div>
             </a>
 
             <!-- Course Control -->
             <div
-                class="group relative overflow-hidden rounded-[2.5rem] bg-emerald-600 p-8 shadow-xl shadow-emerald-500/20 transition-all duration-300">
+                class="group relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-emerald-500/10 transition-all duration-300 border-2 border-emerald-600">
                 <div
-                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                         <path
                             d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z">
                         </path>
                     </svg>
                 </div>
-                <div class="relative z-10 text-white">
+                <div class="relative z-10 text-slate-800 dark:text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        class="w-14 h-14 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-emerald-100 dark:border-emerald-500/20 group-hover:scale-110 transition-transform">
                         📚</div>
                     <h4 class="text-2xl font-black mb-1 tracking-tight">Course Center</h4>
-                    <p class="text-emerald-100 text-sm font-medium opacity-90 m-0">Overview of your assigned academic
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">Overview of your assigned
+                        academic
                         load.</p>
                 </div>
             </div>
 
             <!-- Remedial Scheduler -->
             <a href="{% url 'faculty_remedial' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-purple-600 p-8 shadow-xl shadow-purple-500/20 hover:shadow-purple-500/40 transition-all duration-300 hover:-translate-y-1">
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-purple-500/10 hover:shadow-purple-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-purple-600">
                 <div
-                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                         <path
                             d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-2-7-2c-2.415 0-4.822 1.04-6.236 2.34A1 1 0 002 9.242v1.832a1 1 0 00.655.936l1.24.413a1 1 0 001.076-.239l1.699-1.698A4.956 4.956 0 018 10c1.072 0 2.062.338 2.871.916l.488.324zM8 12a1 1 0 100-2 1 1 0 000 2z" />
                         <path fill-rule="evenodd"
@@ -196,96 +198,100 @@
                             clip-rule="evenodd" />
                     </svg>
                 </div>
-                <div class="relative z-10 text-white">
+                <div class="relative z-10 text-slate-800 dark:text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        class="w-14 h-14 bg-purple-50 dark:bg-purple-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-purple-100 dark:border-purple-500/20 group-hover:scale-110 transition-transform">
                         ⚡</div>
                     <h4 class="text-2xl font-black mb-1 tracking-tight">Remedials</h4>
-                    <p class="text-purple-100 text-sm font-medium opacity-90 m-0">Schedule and manage make-up sessions.
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">Schedule and manage make-up
+                        sessions.
                     </p>
                 </div>
             </a>
 
             <!-- Dining Lounge -->
             <a href="{% url 'student_menu' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-800 p-8 shadow-2xl shadow-slate-200/40 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 transition-all duration-300 hover:-translate-y-1">
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-orange-500/10 hover:shadow-orange-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-orange-600">
                 <div
                     class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
-                    <svg class="w-60 h-60 text-slate-900 dark:text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-60 h-60 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                         <path
                             d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707.707a1 1 0 101.414 1.414l.707-.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z">
                         </path>
                     </svg>
                 </div>
-                <div class="relative z-10 text-slate-800 dark:!text-white">
+                <div class="relative z-10 text-slate-800 dark:text-white">
                     <div
-                        class="w-14 h-14 bg-orange-50 dark:!bg-orange-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-orange-100 dark:!border-orange-500/20 group-hover:scale-110 transition-transform">
+                        class="w-14 h-14 bg-orange-50 dark:bg-orange-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-orange-100 dark:border-orange-500/20 group-hover:scale-110 transition-transform">
                         🍔</div>
                     <h4 class="text-2xl font-black mb-1 tracking-tight">Dining Lounge</h4>
-                    <p class="text-slate-400 text-sm font-medium m-0">Pre-order meals from the faculty lounge.</p>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">Pre-order meals from the
+                        faculty lounge.</p>
                 </div>
             </a>
 
             <!-- Results Entry -->
             <div
-                class="group relative overflow-hidden rounded-[2.5rem] bg-rose-600 p-8 shadow-xl shadow-rose-500/20 transition-all duration-300">
+                class="group relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-rose-500/10 transition-all duration-300 border-2 border-rose-600">
                 <div
-                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
                             d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z"
                             clip-rule="evenodd"></path>
                     </svg>
                 </div>
-                <div class="relative z-10 text-white">
+                <div class="relative z-10 text-slate-800 dark:text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        class="w-14 h-14 bg-rose-50 dark:bg-rose-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-rose-100 dark:border-rose-500/20 group-hover:scale-110 transition-transform">
                         🏆</div>
                     <h4 class="text-2xl font-black mb-1 tracking-tight">Academic Hub</h4>
-                    <p class="text-rose-100 text-sm font-medium opacity-90 m-0">Grade recording and semester analytics.
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">Grade recording and semester
+                        analytics.
                     </p>
                 </div>
             </div>
 
             <!-- Exam Duty -->
             <a href="{% url 'exam_list' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-cyan-600 p-8 shadow-xl shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all duration-300 hover:-translate-y-1">
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-cyan-500/10 hover:shadow-cyan-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-cyan-600">
                 <div
-                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
                         <path fill-rule="evenodd"
                             d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
                             clip-rule="evenodd"></path>
                     </svg>
                 </div>
-                <div class="relative z-10 text-white">
+                <div class="relative z-10 text-slate-800 dark:text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        class="w-14 h-14 bg-cyan-50 dark:bg-cyan-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
                         📝</div>
                     <h4 class="text-2xl font-black mb-1 tracking-tight">Exam Duty</h4>
-                    <p class="text-cyan-100 text-sm font-medium opacity-90 m-0">Duty rosters and invigilation schedules.
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">Duty rosters and invigilation
+                        schedules.
                     </p>
                 </div>
             </a>
 
             <!-- Timetable Portal -->
             <a href="{% url 'timetable' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-amber-600 p-8 shadow-xl shadow-amber-500/20 hover:shadow-amber-500/40 transition-all duration-300 hover:-translate-y-1">
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-amber-500/10 hover:shadow-amber-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-amber-600">
                 <div
-                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
                             d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
                             clip-rule="evenodd" />
                     </svg>
                 </div>
-                <div class="relative z-10 text-white">
+                <div class="relative z-10 text-slate-800 dark:text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        class="w-14 h-14 bg-amber-50 dark:bg-amber-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-amber-100 dark:border-amber-500/20 group-hover:scale-110 transition-transform">
                         📅</div>
                     <h4 class="text-2xl font-black mb-1 tracking-tight">Timetable</h4>
-                    <p class="text-amber-100 text-sm font-medium opacity-90 m-0">View your full weekly academic
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">View your full weekly academic
                         schedule.</p>
                 </div>
             </a>
@@ -425,146 +431,153 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <!-- Attendance Portal -->
             <a href="{% url 'attendance_dashboard' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-indigo-600 p-8 shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all duration-300 hover:-translate-y-1">
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-indigo-500/10 hover:shadow-indigo-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-indigo-600">
                 <div
-                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-indigo-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
                             d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
                             clip-rule="evenodd"></path>
                     </svg>
                 </div>
-                <div class="relative z-10 text-white">
+                <div class="relative z-10 text-slate-800 dark:text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        class="w-14 h-14 bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-indigo-100 dark:border-indigo-500/20 group-hover:scale-110 transition-transform">
                         📊</div>
                     <h4 class="text-2xl font-black mb-1 tracking-tight">Attendance</h4>
-                    <p class="text-indigo-100 text-sm font-medium opacity-90 m-0">Scan history and daily presence
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">Scan history and daily
+                        presence
                         tracking.</p>
                 </div>
             </a>
 
             <!-- Courses Portal -->
             <a href="{% url 'student_courses' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-emerald-600 p-8 shadow-xl shadow-emerald-500/20 hover:shadow-emerald-500/40 transition-all duration-300 hover:-translate-y-1">
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-emerald-600">
                 <div
-                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
                         <path
                             d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z">
                         </path>
                     </svg>
                 </div>
-                <div class="relative z-10 text-white">
+                <div class="relative z-10 text-slate-800 dark:text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        class="w-14 h-14 bg-emerald-50 dark:bg-emerald-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-emerald-100 dark:border-emerald-500/20 group-hover:scale-110 transition-transform">
                         📚</div>
                     <h4 class="text-2xl font-black mb-1 tracking-tight">Courses</h4>
-                    <p class="text-emerald-100 text-sm font-medium opacity-90 m-0">Syllabus, notes, and module progress.
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">Syllabus, notes, and module
+                        progress.
                     </p>
                 </div>
             </a>
 
             <!-- Faculties Portal -->
             <a href="{% url 'student_faculties' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-purple-600 p-8 shadow-xl shadow-purple-500/20 hover:shadow-purple-500/40 transition-all duration-300 hover:-translate-y-1">
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-purple-500/10 hover:shadow-purple-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-purple-600">
                 <div
-                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
                             clip-rule="evenodd"></path>
                     </svg>
                 </div>
-                <div class="relative z-10 text-white">
+                <div class="relative z-10 text-slate-800 dark:text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        class="w-14 h-14 bg-purple-50 dark:bg-purple-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-purple-100 dark:border-purple-500/20 group-hover:scale-110 transition-transform">
                         👨‍🏫</div>
                     <h4 class="text-2xl font-black mb-1 tracking-tight">Faculties</h4>
-                    <p class="text-purple-100 text-sm font-medium opacity-90 m-0">Connect with your assigned course
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">Connect with your assigned
+                        course
                         teachers.</p>
                 </div>
             </a>
 
             <!-- Food Portal -->
             <a href="{% url 'student_menu' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-800 p-8 shadow-2xl shadow-slate-200/40 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 transition-all duration-300 hover:-translate-y-1">
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-orange-500/10 hover:shadow-orange-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-orange-600">
                 <div
                     class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
-                    <svg class="w-60 h-60 text-slate-900 dark:text-white" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-60 h-60 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
                         <path
                             d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707.707a1 1 0 101.414 1.414l.707-.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z">
                         </path>
                     </svg>
                 </div>
-                <div class="relative z-10 text-slate-800 dark:!text-white">
+                <div class="relative z-10 text-slate-800 dark:text-white">
                     <div
-                        class="w-14 h-14 bg-orange-50 dark:!bg-orange-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-orange-100 dark:!border-orange-500/20 group-hover:scale-110 transition-transform">
+                        class="w-14 h-14 bg-orange-50 dark:bg-orange-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-orange-100 dark:border-orange-500/20 group-hover:scale-110 transition-transform">
                         🍔</div>
                     <h4 class="text-2xl font-black mb-1 tracking-tight">Campus Dining</h4>
-                    <p class="text-slate-400 text-sm font-medium m-0">Pre-order meals and bypass cafeteria queues.</p>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">Pre-order meals and bypass
+                        cafeteria queues.</p>
                 </div>
             </a>
 
             <!-- Exams Portal -->
             <a href="{% url 'exam_list' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-cyan-600 p-8 shadow-xl shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all duration-300 hover:-translate-y-1">
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-cyan-500/10 hover:shadow-cyan-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-cyan-600">
                 <div
-                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-cyan-600" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"></path>
                         <path fill-rule="evenodd"
                             d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z"
                             clip-rule="evenodd"></path>
                     </svg>
                 </div>
-                <div class="relative z-10 text-white">
+                <div class="relative z-10 text-slate-800 dark:text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        class="w-14 h-14 bg-cyan-50 dark:bg-cyan-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
                         📝</div>
                     <h4 class="text-2xl font-black mb-1 tracking-tight">Exams</h4>
-                    <p class="text-cyan-100 text-sm font-medium opacity-90 m-0">Schedules, admit cards, and seat
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">Schedules, admit cards, and
+                        seat
                         planning.</p>
                 </div>
             </a>
 
             <!-- Results Portal -->
             <a href="{% url 'student_results' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-rose-600 p-8 shadow-xl shadow-rose-500/20 hover:shadow-rose-500/40 transition-all duration-300 hover:-translate-y-1">
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-rose-500/10 hover:shadow-rose-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-rose-600">
                 <div
-                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
                             d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z"
                             clip-rule="evenodd"></path>
                     </svg>
                 </div>
-                <div class="relative z-10 text-white">
+                <div class="relative z-10 text-slate-800 dark:text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        class="w-14 h-14 bg-rose-50 dark:bg-rose-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-rose-100 dark:border-rose-500/20 group-hover:scale-110 transition-transform">
                         🏆</div>
                     <h4 class="text-2xl font-black mb-1 tracking-tight">Results</h4>
-                    <p class="text-rose-100 text-sm font-medium opacity-90 m-0">Historical grades and CGPA analytics.
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">Historical grades and CGPA
+                        analytics.
                     </p>
                 </div>
             </a>
 
             <!-- Timetable Portal -->
             <a href="{% url 'timetable' %}"
-                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-amber-600 p-8 shadow-xl shadow-amber-500/20 hover:shadow-amber-500/40 transition-all duration-300 hover:-translate-y-1">
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-amber-500/10 hover:shadow-amber-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-amber-600">
                 <div
-                    class="absolute -right-10 -bottom-10 opacity-10 transform group-hover:scale-110 transition-transform duration-500">
-                    <svg class="w-60 h-60 text-white" fill="currentColor" viewBox="0 0 20 20">
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-amber-600" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
                             d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
                             clip-rule="evenodd" />
                     </svg>
                 </div>
-                <div class="relative z-10 text-white">
+                <div class="relative z-10 text-slate-800 dark:text-white">
                     <div
-                        class="w-14 h-14 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-white/30 group-hover:scale-110 transition-transform">
+                        class="w-14 h-14 bg-amber-50 dark:bg-amber-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-amber-100 dark:border-amber-500/20 group-hover:scale-110 transition-transform">
                         📅</div>
                     <h4 class="text-2xl font-black mb-1 tracking-tight">Timetable</h4>
-                    <p class="text-amber-100 text-sm font-medium opacity-90 m-0">Your weekly academic schedule.</p>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">Your weekly academic schedule.
+                    </p>
                 </div>
             </a>
         </div>

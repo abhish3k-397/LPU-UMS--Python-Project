@@ -24,8 +24,17 @@ def generate_uid(role):
         return ''.join(random.choices(string.digits, k=4))
     return None
 
+import shutil
+
 def setup_project():
     print("Flushing existing data (except admin)...")
+    
+    # Clean up media files that get recreated
+    exam_media_path = os.path.join(settings.MEDIA_ROOT, 'exams')
+    if os.path.exists(exam_media_path):
+        shutil.rmtree(exam_media_path)
+        print(f"Cleared existing exam media at {exam_media_path}")
+
     User.objects.exclude(username='admin').delete()
     Section.objects.all().delete()
     Course.objects.all().delete()
@@ -155,11 +164,20 @@ def setup_project():
 
     print("7. Creating Food Items & Time Slots...")
     food_data = [
-        ("Samosa", 15.00), ("Veg Burger", 45.00), ("Cold Coffee", 50.00), 
-        ("Masala Dosa", 60.00), ("Paneer Wrap", 75.00), ("Iced Tea", 35.00)
+        ("Samosa", 15.00, "food_items/samosa.png"), 
+        ("Veg Burger", 45.00, "food_items/veg_burger.png"), 
+        ("Cold Coffee", 50.00, "food_items/cold_coffee.png"), 
+        ("Masala Dosa", 60.00, "food_items/masala_dosa.png"), 
+        ("Paneer Wrap", 75.00, "food_items/paneer_wrap.png"), 
+        ("Iced Tea", 35.00, "food_items/iced_tea.png")
     ]
-    for name, price in food_data:
-        FoodItem.objects.create(name=name, price=price, description=f"Fresh {name}")
+    for name, price, img_path in food_data:
+        FoodItem.objects.create(
+            name=name, 
+            price=price, 
+            description=f"Fresh {name}",
+            image=img_path
+        )
         
     f_slots = [("10:00", "11:00"), ("12:00", "13:00"), ("14:00", "15:00")]
     for start, end in f_slots:

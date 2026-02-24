@@ -56,7 +56,7 @@ def dashboard_view(request):
         from django.utils import timezone
         import datetime
         
-        now = timezone.now()
+        now = timezone.localtime()
         today = now.date()
         
         # Determine current slot
