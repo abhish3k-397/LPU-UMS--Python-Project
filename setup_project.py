@@ -27,7 +27,7 @@ def generate_uid(role):
 import shutil
 
 def setup_project():
-    print("Flushing existing data (except admin)...")
+    print("Flushing existing data...")
     
     # Clean up media files that get recreated
     exam_media_path = os.path.join(settings.MEDIA_ROOT, 'exams')
@@ -35,8 +35,18 @@ def setup_project():
         shutil.rmtree(exam_media_path)
         print(f"Cleared existing exam media at {exam_media_path}")
 
-    User.objects.exclude(username='admin').delete()
+    User.objects.all().delete()
     Section.objects.all().delete()
+
+    print("0. Creating Admin Superuser...")
+    admin = User.objects.create_superuser(
+        username='admin',
+        email='admin@lpu.in',
+        password='admin',
+        role='ADMIN'
+    )
+    admin.is_approved = True
+    admin.save()
     Course.objects.all().delete()
     FoodItem.objects.all().delete()
     TimeSlot.objects.all().delete()
