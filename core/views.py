@@ -71,13 +71,12 @@ def dashboard_view(request):
         current_day_code = days_map.get(now.weekday())
         
         active_slots = []
-        if current_day_code and current_slot_num:
-            # Find timetable slots for this faculty right now
+        if current_day_code:
+            # Find all timetable slots for this faculty for the entire current day
             faculty_slots = TimetableSlot.objects.filter(
                 course__faculty=request.user,
-                day_of_week=current_day_code,
-                slot_number=current_slot_num
-            )
+                day_of_week=current_day_code
+            ).order_by('slot_number')
             
             for slot in faculty_slots:
                 # Check if session already exists for this slot today
@@ -86,8 +85,10 @@ def dashboard_view(request):
                     date=today
                 ).exists()
                 
-                if not session_exists:
-                    active_slots.append(slot)
+                slot.is_punched = session_exists
+                # Tag the slot if it's currently active (matching current hour)
+                slot.is_current = (slot.slot_number == current_slot_num)
+                active_slots.append(slot)
         
         context['active_slots'] = active_slots
         

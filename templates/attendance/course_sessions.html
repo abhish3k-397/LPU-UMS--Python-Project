@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4 min-h-[calc(100vh-80px)]">
+    <!-- Header Area -->
+    <div class="row mb-8 px-lg-4">
+        <div class="col-12 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <nav aria-label="breadcrumb" class="mb-2">
+                    <ol class="breadcrumb bg-transparent p-0 m-0">
+                        <li class="breadcrumb-item"><a href="{% url 'faculty_courses' %}"
+                                class="text-slate-500 font-bold no-underline hover:text-emerald-500 transition-colors">Course
+                                Center</a>
+                        </li>
+                        <li class="breadcrumb-item active text-slate-800 dark:!text-white font-black"
+                            aria-current="page">
+                            <span class="opacity-50 mx-2">/</span>
+                            {{ course.code }}
+                        </li>
+                    </ol>
+                </nav>
+                <h2 class="h2 font-black text-slate-800 dark:!text-white mb-2 tracking-tight">Session History</h2>
+                <div class="flex items-center gap-2">
+                    <div class="w-1.5 h-6 bg-emerald-500 rounded-full"></div>
+                    <p class="text-slate-500 dark:!text-slate-400 font-medium m-0">{{ course.name }}</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="{% url 'faculty_courses' %}"
+                    class="px-5 py-2.5 bg-white dark:!bg-slate-800 text-slate-600 dark:!text-slate-300 font-bold rounded-xl border border-slate-200 dark:!border-slate-700 hover:bg-slate-50 dark:hover:!bg-slate-700 transition-all shadow-sm no-underline flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Back to Courses
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity Stream -->
+    <div class="row px-lg-4">
+        <div class="col-12">
+            <div class="flex items-center justify-between mb-6">
+                <h4 class="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">Timeline of Conducted Sessions
+                </h4>
+                <div
+                    class="px-4 py-1.5 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded-lg uppercase tracking-widest border border-emerald-500/20">
+                    {{ sessions_data|length }} TOTAL SESSIONS
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                {% for data in sessions_data %}
+                <div
+                    class="group relative bg-white dark:!bg-slate-800/80 rounded-[2rem] border border-slate-100 dark:!border-slate-700/50 p-1 hover:border-emerald-500/30 transition-all duration-500">
+                    <!-- Glass Shine Effect -->
+                    <div
+                        class="absolute inset-0 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none bg-gradient-to-tr from-emerald-500/5 via-transparent to-white/5">
+                    </div>
+
+                    <div class="relative p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <!-- Date & Slot Info -->
+                        <div class="flex items-center gap-5">
+                            <div
+                                class="flex flex-col items-center justify-center w-16 h-16 rounded-2xl bg-slate-50 dark:!bg-slate-900 border border-slate-100 dark:!border-slate-700 group-hover:bg-emerald-500 group-hover:border-emerald-400 dark:group-hover:!bg-emerald-600 transition-all duration-500">
+                                <span
+                                    class="text-[10px] font-black text-slate-400 group-hover:text-emerald-100 uppercase tracking-tighter leading-none mb-1">
+                                    {{ data.session.date|date:"M" }}
+                                </span>
+                                <span
+                                    class="text-xl font-black text-slate-800 dark:!text-white group-hover:text-white leading-none">
+                                    {{ data.session.date|date:"d" }}
+                                </span>
+                            </div>
+                            <div>
+                                <h5
+                                    class="text-lg font-black text-slate-800 dark:!text-white m-0 group-hover:text-emerald-500 transition-colors">
+                                    {{ data.session.date|date:"l" }}
+                                </h5>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <div
+                                        class="px-2 py-0.5 rounded-md bg-orange-100 dark:!bg-orange-500/10 text-orange-600 dark:!text-orange-500 text-[10px] font-black uppercase tracking-wider">
+                                        Slot {{ data.session.slot.slot_number }}
+                                    </div>
+                                    <span class="text-xs font-bold text-slate-400 dark:!text-slate-500">
+                                        {{ data.time_string }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Statistics -->
+                        <div
+                            class="grid grid-cols-2 md:flex md:items-center gap-6 md:gap-12 pl-4 md:pl-0 border-l border-slate-100 dark:!border-slate-700">
+                            <!-- Attendance Ratio -->
+                            <div class="flex flex-col">
+                                <span
+                                    class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">Attendance
+                                    Ratio</span>
+                                <div class="flex items-baseline gap-1">
+                                    <span class="text-base font-black text-slate-800 dark:!text-white">
+                                        {{ data.present_count }}
+                                    </span>
+                                    <span class="text-xs font-bold text-slate-400">/ {{ data.total_count }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Performance Score -->
+                            <div class="flex flex-col min-w-[120px]">
+                                <span
+                                    class="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-2">Performance</span>
+                                <div class="flex items-center gap-3">
+                                    <div
+                                        class="flex-grow bg-slate-100 dark:!bg-slate-900 rounded-full h-2 overflow-hidden">
+                                        <div class="h-full rounded-full transition-all duration-1000 ease-out {% if data.percentage > 80 %}bg-emerald-500{% elif data.percentage > 40 %}bg-orange-500{% else %}bg-red-500{% endif %}"
+                                            style="width: {{ data.percentage }}%"></div>
+                                    </div>
+                                    <span
+                                        class="text-xs font-black {% if data.percentage > 80 %}text-emerald-500{% elif data.percentage > 40 %}text-orange-500{% else %}text-red-500{% endif %}">
+                                        {{ data.percentage }}%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action -->
+                        <div>
+                            <a href="{% url 'session_detail' data.session.id %}"
+                                class="group/btn relative px-6 py-3 bg-slate-900 dark:!bg-slate-700 text-white rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95 no-underline flex items-center gap-2">
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-r from-emerald-600 to-emerald-400 opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300">
+                                </div>
+                                <span class="relative z-10 text-xs font-black uppercase tracking-widest">View
+                                    Summary</span>
+                                <svg class="relative z-10 w-4 h-4 transition-transform duration-300 group-hover/btn:translate-x-1"
+                                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                        d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div
+                    class="py-20 text-center bg-white dark:!bg-slate-800/80 rounded-[2.5rem] border border-dashed border-slate-200 dark:!border-slate-700">
+                    <div
+                        class="w-16 h-16 bg-slate-50 dark:!bg-slate-900 rounded-full flex items-center justify-center mx-auto mb-4 scale-150 opacity-20">
+                        <svg class="w-8 h-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <p class="text-slate-400 font-bold m-0 italic">No attendance history available for this course.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom spacing for breadcrumbs item to fix layout issue */
+    .breadcrumb-item+.breadcrumb-item::before {
+        display: none !important;
+    }
+</style>
+{% endblock %}

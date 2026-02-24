@@ -164,8 +164,8 @@
             </a>
 
             <!-- Course Control -->
-            <div
-                class="group relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-emerald-500/10 transition-all duration-300 border-2 border-emerald-600">
+            <a href="{% url 'faculty_courses' %}"
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-emerald-500/10 hover:shadow-emerald-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-emerald-600">
                 <div
                     class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
                     <svg class="w-60 h-60 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
@@ -183,7 +183,7 @@
                         academic
                         load.</p>
                 </div>
-            </div>
+            </a>
 
             <!-- Remedial Scheduler -->
             <a href="{% url 'faculty_remedial' %}"
@@ -313,10 +313,17 @@
                     Management</h4>
             </div>
             {% if active_slots %}
+            {% if active_slots.0.is_current %}
             <span
                 class="px-4 py-2 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded-full uppercase tracking-widest animate-pulse border border-emerald-500/20">
                 LIVE SLOT ACTIVE
             </span>
+            {% else %}
+            <span
+                class="px-4 py-2 bg-indigo-500/10 text-indigo-500 text-[10px] font-black rounded-full uppercase tracking-widest border border-indigo-500/20">
+                DAILY SCHEDULE
+            </span>
+            {% endif %}
             {% endif %}
         </div>
 
@@ -326,13 +333,21 @@
                 class="group bg-white dark:!bg-slate-800 rounded-[2.5rem] p-0 overflow-hidden border border-slate-100 dark:!border-slate-700/50 shadow-2xl shadow-slate-200/40 dark:shadow-none transition-all duration-300 hover:-translate-y-1">
                 <div class="p-8">
                     <div class="flex justify-between items-start mb-6">
+                        {% if slot.is_current %}
+                        <span
+                            class="px-4 py-1.5 bg-emerald-600 text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg animate-pulse">
+                            CURRENTLY ACTIVE
+                        </span>
+                        {% else %}
                         <span
                             class="px-4 py-1.5 bg-slate-900 dark:!bg-slate-700 text-white text-[10px] font-black rounded-xl uppercase tracking-widest shadow-lg">
-                            {{ slot.course.code }}
+                            UPCOMING
                         </span>
+                        {% endif %}
                         <div
                             class="flex items-center gap-1.5 text-slate-400 font-bold text-xs uppercase tracking-wider">
-                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                            <span
+                                class="w-2 h-2 rounded-full {% if slot.is_current %}bg-emerald-500{% else %}bg-indigo-500{% endif %}"></span>
                             Slot {{ slot.slot_number }}
                         </div>
                     </div>
@@ -343,6 +358,15 @@
                         Section: {{ slot.section.name }}
                     </p>
 
+                    {% if slot.is_punched %}
+                    <div
+                        class="w-full h-14 bg-emerald-500/10 text-emerald-600 font-black rounded-2xl border-2 border-dashed border-emerald-500/30 flex items-center justify-center gap-2">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                        </svg>
+                        ATTENDANCE COMPLETED
+                    </div>
+                    {% else %}
                     <form method="post" action="{% url 'create_session' slot.id %}" class="m-0">
                         {% csrf_token %}
                         <button type="submit"
@@ -354,6 +378,7 @@
                             PUNCH ATTENDANCE
                         </button>
                     </form>
+                    {% endif %}
                 </div>
             </div>
             {% empty %}

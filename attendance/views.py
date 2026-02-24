@@ -197,3 +197,86 @@ def timetable_view(request):
         'now': timezone.now()
     }
     return render(request, 'attendance/timetable.html', context)
+
+@login_required
+@user_passes_test(is_faculty)
+def faculty_courses(request):
+    courses = Course.objects.filter(faculty=request.user)
+    course_list = []
+    
+    for course in courses:
+        total_students = course.students.count()
+        total_sessions = AttendanceSession.objects.filter(course=course).count()
+        
+        # Calculate average attendance for this course
+        if total_sessions > 0:
+            total_possible_attendance = total_students * total_sessions
+            total_present_records = AttendanceRecord.objects.filter(
+                session__course=course, 
+                is_present=True
+            ).count()
+            avg_attendance = round((total_present_records / total_possible_attendance) * 100, 1)
+        else:
+            avg_attendance = 0.0
+            
+        recent_session = AttendanceSession.objects.filter(course=course).order_by('-date').first()
+        
+        course_list.append({
+            'course': course,
+            'total_students': total_students,
+            'total_sessions': total_sessions,
+            'avg_attendance': avg_attendance,
+            'recent_session': recent_session
+        })
+        
+    return render(request, 'attendance/faculty_courses.html', {'courses_data': course_list})
+
+@login_required
+@user_passes_test(is_faculty)
+def course_sessions(request, course_id):
+    course = get_object_or_404(Course, id=course_id, faculty=request.user)
+    sessions = AttendanceSession.objects.filter(course=course).order_by('-date', '-slot__slot_number')
+    
+    total_students = course.students.count()
+    session_data = []
+    
+    for session in sessions:
+        present_count = AttendanceRecord.objects.filter(session=session, is_present=True).count()
+        
+        # Calculate times based on slot_number (Slot 1 = 9AM, Slot 2 = 10AM, etc.)
+        start_hour = session.slot.slot_number + 8
+        end_hour = start_hour + 1
+        time_string = f"{start_hour:02d}:00 - {end_hour:02d}:00"
+        
+        session_data.append({
+            'session': session,
+            'present_count': present_count,
+            'total_count': total_students,
+            'percentage': round((present_count / total_students * 100), 1) if total_students > 0 else 0,
+            'time_string': time_string
+        })
+        
+    context = {
+        'course': course,
+        'sessions_data': session_data
+    }
+    return render(request, 'attendance/course_sessions.html', context)
+
+@login_required
+@user_passes_test(is_faculty)
+def session_detail(request, session_id):
+    session = get_object_or_404(AttendanceSession, id=session_id, course__faculty=request.user)
+    records = session.records.all().select_related('student')
+    
+    total_count = records.count()
+    present_count = records.filter(is_present=True).count()
+    percentage = (present_count / total_count * 100) if total_count > 0 else 0
+    
+    context = {
+        'session': session,
+        'records': records,
+        'present_count': present_count,
+        'total_count': total_count,
+        'percentage': round(percentage, 1)
+    }
+    return render(request, 'attendance/session_detail.html', context)
