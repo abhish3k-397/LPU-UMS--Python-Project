@@ -26,8 +26,18 @@ class TimetableSlot(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='slots')
     section = models.ForeignKey(Section, on_delete=models.CASCADE, related_name='timetable')
 
-    class Meta:
-        unique_together = ('day_of_week', 'slot_number', 'section')
+    @property
+    def time_range(self):
+        slot_times = {
+            1: "09:00 - 10:00",
+            2: "10:00 - 11:00",
+            3: "11:00 - 12:00",
+            4: "12:00 - 13:00",
+            5: "13:00 - 14:00",
+            6: "14:00 - 15:00",
+            7: "15:00 - 16:00",
+        }
+        return slot_times.get(self.slot_number, f"Slot {self.slot_number}")
 
     def __str__(self):
         return f"{self.section.name} - {self.day_of_week} Slot {self.slot_number} ({self.course.code})"
@@ -35,14 +45,17 @@ class TimetableSlot(models.Model):
 class AttendanceSession(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     slot = models.ForeignKey(TimetableSlot, on_delete=models.CASCADE, null=True, blank=True)
+    remedial_session = models.ForeignKey('remedial_classes.RemedialSession', on_delete=models.SET_NULL, null=True, blank=True)
     date = models.DateField(default=timezone.now)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('date', 'slot')
+        # A session is unique by date and either its timetable slot or its remedial session
+        unique_together = ('date', 'slot', 'remedial_session')
 
     def __str__(self):
-        return f"{self.course.code} - {self.date} (Slot {self.slot.slot_number if self.slot else 'N/A'})"
+        slot_info = f"Slot {self.slot.slot_number}" if self.slot else f"Remedial (Slot {self.remedial_session.slot_number})" if self.remedial_session else "N/A"
+        return f"{self.course.code} - {self.date} ({slot_info})"
 
 class AttendanceRecord(models.Model):
     session = models.ForeignKey(AttendanceSession, on_delete=models.CASCADE, related_name='records')

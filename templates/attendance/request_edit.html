@@ -26,46 +26,43 @@
                 <form method="post" action="{% url 'request_edit' %}" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {% csrf_token %}
 
-                    <!-- Session Selector (Spans 2) -->
+                    <!-- Section Selector (Spans 2) -->
+                    <div class="md:col-span-2">
+                        <label
+                            class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Select
+                            Section</label>
+                        <select id="sectionSelect"
+                            class="w-full h-16 px-6 bg-slate-50 dark:!bg-slate-900 border border-slate-200 dark:!border-slate-700 rounded-3xl text-slate-700 dark:!text-slate-200 font-bold focus:!ring-2 focus:!ring-indigo-500/20 focus:!border-indigo-500 transition-all appearance-none cursor-pointer"
+                            required>
+                            <option value="">-- Choose a section --</option>
+                            {% for section in sections %}
+                            <option value="{{ section.id }}">{{ section.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Session Selector (Dependent Spans 2) -->
                     <div class="md:col-span-2">
                         <label
                             class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Select
                             Prior Session</label>
                         <select name="session_id" id="sessionSelect"
-                            class="w-full h-16 px-6 bg-slate-50 dark:!bg-slate-900 border border-slate-200 dark:!border-slate-700 rounded-3xl text-slate-700 dark:!text-slate-200 font-bold focus:!ring-2 focus:!ring-indigo-500/20 focus:!border-indigo-500 transition-all appearance-none cursor-pointer"
-                            required>
-                            <option value="">-- Choose a session history --</option>
-                            {% for session in sessions %}
-                            <option value="{{ session.id }}">
-                                {{ session.course.code }}
-                                |
-                                {{ session.course.name|truncatechars:20 }}
-                                |
-                                {{ session.date|date:"N j, Y" }}
-                            </option>
-                            {% endfor %}
+                            class="w-full h-16 px-6 bg-slate-50 dark:!bg-slate-900 border border-slate-200 dark:!border-slate-700 rounded-3xl text-slate-700 dark:!text-slate-200 font-bold focus:!ring-2 focus:!ring-indigo-500/20 focus:!border-indigo-500 transition-all appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            required disabled>
+                            <option value="">-- Choose a section first --</option>
                         </select>
                     </div>
 
-                    <!-- Student Identity Dropdown -->
+                    <!-- Student Identity Dropdown (Dependent) -->
                     <div class="md:col-span-1">
                         <label
                             class="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-2">Student
                             Identity</label>
-                        <div class="relative">
-                            <select name="student_id"
-                                class="w-full h-16 px-6 bg-slate-50 dark:!bg-slate-900 border border-slate-200 dark:!border-slate-700 rounded-3xl text-slate-700 dark:!text-slate-200 font-bold focus:!ring-2 focus:!ring-indigo-500/20 focus:!border-indigo-500 transition-all appearance-none cursor-pointer"
-                                required>
-                                <option value="">-- Select a student --</option>
-                                {% for student in students %}
-                                <option value="{{ student.id }}">
-                                    {{ student.username }}
-                                    (UID:
-                                    {{ student.uid|default:"N/A" }})
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                        <select name="student_id" id="studentSelect"
+                            class="w-full h-16 px-6 bg-slate-50 dark:!bg-slate-900 border border-slate-200 dark:!border-slate-700 rounded-3xl text-slate-700 dark:!text-slate-200 font-bold focus:!ring-2 focus:!ring-indigo-500/20 focus:!border-indigo-500 transition-all appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            required disabled>
+                            <option value="">-- Choose a section first --</option>
+                        </select>
                     </div>
 
                     <!-- Requested Status -->
@@ -112,6 +109,68 @@
         </div>
     </div>
 </div>
+
+{{ data_map_json|json_script:"data-map" }}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Django's json_script outputs valid JSON block, so we just parse it once
+        const dataMapRaw = JSON.parse(document.getElementById('data-map').textContent);
+        // Since we did json.dumps in views.py, it might be double-encoded as a string
+        const dataMap = typeof dataMapRaw === 'string' ? JSON.parse(dataMapRaw) : dataMapRaw;
+
+        const sectionSelect = document.getElementById('sectionSelect');
+        const sessionSelect = document.getElementById('sessionSelect');
+        const studentSelect = document.getElementById('studentSelect');
+
+        sectionSelect.addEventListener('change', function () {
+            const sectionId = this.value;
+
+            // Reset dependent dropdowns
+            sessionSelect.innerHTML = '<option value="">-- Choose a session --</option>';
+            studentSelect.innerHTML = '<option value="">-- Select a student --</option>';
+
+            // dataMap keys might be strings in JSON
+            if (sectionId && dataMap[String(sectionId)]) {
+                const sectionData = dataMap[String(sectionId)];
+
+                // Populate sessions
+                if (sectionData.sessions.length > 0) {
+                    sectionData.sessions.forEach(sess => {
+                        const option = document.createElement('option');
+                        option.value = sess.id;
+                        option.textContent = sess.display;
+                        sessionSelect.appendChild(option);
+                    });
+                    sessionSelect.disabled = false;
+                } else {
+                    sessionSelect.innerHTML = '<option value="">-- No sessions found --</option>';
+                    sessionSelect.disabled = true;
+                }
+
+                // Populate students
+                if (sectionData.students.length > 0) {
+                    sectionData.students.forEach(stu => {
+                        const option = document.createElement('option');
+                        option.value = stu.id;
+                        option.textContent = stu.display;
+                        studentSelect.appendChild(option);
+                    });
+                    studentSelect.disabled = false;
+                } else {
+                    studentSelect.innerHTML = '<option value="">-- No students found --</option>';
+                    studentSelect.disabled = true;
+                }
+            } else {
+                // Disabled state if no section is active
+                sessionSelect.innerHTML = '<option value="">-- Choose a section first --</option>';
+                studentSelect.innerHTML = '<option value="">-- Choose a section first --</option>';
+                sessionSelect.disabled = true;
+                studentSelect.disabled = true;
+            }
+        });
+    });
+</script>
 
 <style>
     /* Custom Focus Animation */

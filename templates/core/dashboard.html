@@ -231,8 +231,8 @@
             </a>
 
             <!-- Results Entry -->
-            <div
-                class="group relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-rose-500/10 transition-all duration-300 border-2 border-rose-600">
+            <a href="{% url 'academic_hub' %}"
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-rose-500/10 hover:shadow-rose-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-rose-600">
                 <div
                     class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
                     <svg class="w-60 h-60 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
@@ -250,7 +250,7 @@
                         analytics.
                     </p>
                 </div>
-            </div>
+            </a>
 
             <!-- Exam Duty -->
             <a href="{% url 'exam_list' %}"
@@ -348,14 +348,18 @@
                             class="flex items-center gap-1.5 text-slate-400 font-bold text-xs uppercase tracking-wider">
                             <span
                                 class="w-2 h-2 rounded-full {% if slot.is_current %}bg-emerald-500{% else %}bg-indigo-500{% endif %}"></span>
-                            Slot {{ slot.slot_number }}
+                            {{ slot.time_range }}
                         </div>
                     </div>
                     <h5 class="text-xl font-black text-slate-800 dark:!text-white mb-2 leading-tight">
                         {{ slot.course.name }}
+                        {% if slot.is_remedial %}
+                        <span
+                            class="inline-block ml-2 px-2 py-0.5 bg-indigo-500/10 text-indigo-500 text-[9px] font-black rounded-lg uppercase tracking-[0.1em] border border-indigo-500/20">REMEDIAL</span>
+                        {% endif %}
                     </h5>
                     <p class="text-slate-400 font-bold text-sm mb-8">
-                        Section: {{ slot.section.name }}
+                        Section: {{ slot.section.name|default:"General" }}
                     </p>
 
                     {% if slot.is_punched %}
@@ -367,7 +371,9 @@
                         ATTENDANCE COMPLETED
                     </div>
                     {% else %}
-                    <form method="post" action="{% url 'create_session' slot.id %}" class="m-0">
+                    <form method="post"
+                        action="{% url 'create_session' slot.id %}?type={% if slot.is_remedial %}remedial{% else %}regular{% endif %}"
+                        class="m-0">
                         {% csrf_token %}
                         <button type="submit"
                             class="w-full h-14 bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-black rounded-2xl shadow-lg shadow-orange-500/20 transition-all flex items-center justify-center gap-2 border-none">
@@ -399,7 +405,7 @@
 
     <!-- Student Metric Grid -->
     <div class="col-12 px-lg-4 mb-10">
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
             <!-- Attendance -->
             <div
                 class="bg-white dark:!bg-slate-800 rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 group hover:scale-[1.02] transition-transform duration-300">
@@ -446,6 +452,18 @@
                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Credit Units</p>
                 <h3 class="text-3xl font-black text-slate-800 dark:!text-white m-0">
                     {{ credits_progress }}
+                </h3>
+            </div>
+            <!-- Remedial Sessions -->
+            <div
+                class="bg-white dark:!bg-slate-800 rounded-[2rem] p-6 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:!border-slate-700/50 group hover:scale-[1.02] transition-transform duration-300">
+                <div
+                    class="w-10 h-10 bg-indigo-50 dark:!bg-indigo-500/10 rounded-xl flex items-center justify-center mb-4 border border-indigo-100 dark:!border-indigo-500/20 shadow-inner">
+                    <span class="text-xl text-indigo-500">⚡</span>
+                </div>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Remedial Count</p>
+                <h3 class="text-3xl font-black text-slate-800 dark:!text-white m-0">
+                    {{ remedial_attended }}
                 </h3>
             </div>
         </div>
@@ -605,6 +623,7 @@
                     </p>
                 </div>
             </a>
+
         </div>
     </div>
     {% endif %}

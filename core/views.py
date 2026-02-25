@@ -70,6 +70,8 @@ def dashboard_view(request):
         days_map = {0: 'MON', 1: 'TUE', 2: 'WED', 3: 'THU', 4: 'FRI'}
         current_day_code = days_map.get(now.weekday())
         
+        from remedial_classes.models import RemedialSession
+        
         active_slots = []
         if current_day_code:
             # Find all timetable slots for this faculty for the entire current day
@@ -88,7 +90,33 @@ def dashboard_view(request):
                 slot.is_punched = session_exists
                 # Tag the slot if it's currently active (matching current hour)
                 slot.is_current = (slot.slot_number == current_slot_num)
+                slot.is_remedial = False
                 active_slots.append(slot)
+            
+            # Find approved remedial sessions for today
+            remedial_sessions = RemedialSession.objects.filter(
+                faculty=request.user,
+                date=today,
+                status='APPROVED'
+            )
+            
+            for rs in remedial_sessions:
+                # Check if attendance session exists for this remedial
+                # Since remedial sessions are one-off, we can link them to course + date + slot
+                session_exists = AttendanceSession.objects.filter(
+                    remedial_session=rs,
+                    date=today
+                ).exists()
+                
+                # Mocking a slot-like object for the UI
+                rs.slot_number = rs.slot_number # already exists
+                rs.is_punched = session_exists
+                rs.is_current = (rs.slot_number == current_slot_num)
+                rs.is_remedial = True
+                active_slots.append(rs)
+            
+            # Re-sort everything by slot number
+            active_slots.sort(key=lambda x: x.slot_number)
         
         context['active_slots'] = active_slots
         
@@ -107,16 +135,23 @@ def dashboard_view(request):
         ).count()
     elif request.user.role == 'STUDENT':
         from attendance.models import Course, AttendanceRecord
-        from remedial_classes.models import RemedialAttendance
         from results.models import SemesterResult
         
         courses = Course.objects.filter(students=request.user)
         context['enrolled_courses_count'] = courses.count()
         
-        # Calculate overall attendance percentage
-        total_records = AttendanceRecord.objects.filter(student=request.user).count()
+        # Calculate overall attendance percentage (Academic only, excluding remedial)
+        from attendance.models import AttendanceRecord
+        total_records = AttendanceRecord.objects.filter(
+            student=request.user, 
+            session__remedial_session__isnull=True
+        ).count()
         if total_records > 0:
-            present_records = AttendanceRecord.objects.filter(student=request.user, is_present=True).count()
+            present_records = AttendanceRecord.objects.filter(
+                student=request.user, 
+                session__remedial_session__isnull=True,
+                is_present=True
+            ).count()
             context['overall_attendance'] = round((present_records / total_records) * 100, 1)
         else:
             context['overall_attendance'] = "0.0"
@@ -130,7 +165,12 @@ def dashboard_view(request):
             context['latest_sgpa'] = "0.0"
             context['credits_progress'] = "0/0"
             
-        context['remedial_attended'] = RemedialAttendance.objects.filter(student=request.user).count()
+        from attendance.models import AttendanceRecord
+        context['remedial_attended'] = AttendanceRecord.objects.filter(
+            student=request.user, 
+            session__remedial_session__isnull=False, 
+            is_present=True
+        ).count()
     
     return render(request, 'core/dashboard.html', context)
 

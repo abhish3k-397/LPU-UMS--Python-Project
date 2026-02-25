@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="row mb-8">
+    <div class="col-12 px-lg-4 text-center text-md-start">
+        <h2 class="text-4xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">Academic Hub</h2>
+        <p class="text-slate-500 dark:text-slate-400 font-medium">Manage course outcomes and student performance
+            analytics.</p>
+    </div>
+</div>
+
+<!-- Key Analytics Overview -->
+<div class="row g-4 px-lg-4 mb-10">
+    <div class="col-6 col-md-4">
+        <div
+            class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-[2rem] p-6 shadow-xl shadow-indigo-500/20 text-white group hover:scale-[1.02] transition-transform duration-300">
+            <div
+                class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center mb-4 border border-white/30 shadow-inner">
+                <span class="text-xl">📚</span>
+            </div>
+            <p class="text-[10px] font-black uppercase tracking-widest opacity-80 mb-1">Total Courses</p>
+            <h3 class="text-3xl font-black m-0">{{ courses|length }}</h3>
+        </div>
+    </div>
+    <!-- Additional stats could go here -->
+</div>
+
+<!-- Course List -->
+<div class="row px-lg-4">
+    <div class="col-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20">
+            {% for course in courses %}
+            <div
+                class="bg-white dark:!bg-slate-800 rounded-[2.5rem] overflow-hidden border border-slate-100 dark:!border-slate-700/50 shadow-2xl shadow-slate-200/40 dark:shadow-none transition-all group hover:-translate-y-2">
+                <div class="p-8">
+                    <div class="flex justify-between items-start mb-6">
+                        <div
+                            class="w-14 h-14 bg-indigo-50 dark:!bg-indigo-500/10 rounded-2xl flex items-center justify-center text-2xl border border-indigo-100 dark:!border-indigo-500/20 shadow-inner group-hover:scale-110 transition-transform">
+                            📖
+                        </div>
+                        <span
+                            class="px-3 py-1 bg-emerald-500/10 text-emerald-500 text-[10px] font-black rounded-full uppercase tracking-widest border border-emerald-500/20">
+                            {{ course.student_count }} Students
+                        </span>
+                    </div>
+
+                    <p class="text-xs font-bold text-indigo-500 mb-1 tracking-widest uppercase">{{ course.code }}</p>
+                    <h4 class="text-2xl font-black text-slate-800 dark:!text-white mb-6 tracking-tight leading-tight">
+                        {{ course.name }}
+                    </h4>
+
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Avg Grade</span>
+                            <span class="text-lg font-black text-slate-800 dark:!text-white">
+                                {{ course.avg_grade_points|default:"N/A"|floatformat:1 }}
+                            </span>
+                        </div>
+                        <!-- Progress info could go here -->
+                    </div>
+
+                    <a href="{% url 'manage_grades' course.id %}"
+                        class="block w-full py-4 bg-slate-900 dark:!bg-indigo-600 hover:bg-slate-800 dark:hover:!bg-indigo-700 text-white text-center font-black rounded-2xl shadow-lg transition-all no-underline">
+                        Manage Grades
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div
+                class="col-span-full text-center py-20 bg-slate-50 dark:!bg-slate-900/50 rounded-[3rem] border-2 border-dashed border-slate-200 dark:!border-slate-700">
+                <div class="text-5xl mb-6">🏜️</div>
+                <h3 class="text-2xl font-black text-slate-800 dark:!text-white mb-2">No Courses Assigned</h3>
+                <p class="text-slate-400 font-medium max-w-sm mx-auto">You don't have any active courses assigned to you
+                    this semester.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -20,8 +20,10 @@ class SemesterResult(models.Model):
 
 class CourseGrade(models.Model):
     semester_result = models.ForeignKey(SemesterResult, on_delete=models.CASCADE, related_name='grades')
-    course_name = models.CharField(max_length=100)
-    course_code = models.CharField(max_length=20)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='course_grades', null=True, blank=True)
+    student = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='individual_grades', null=True, blank=True)
+    course_name = models.CharField(max_length=100) # Keep for redundancy/history
+    course_code = models.CharField(max_length=20) # Keep for redundancy/history
     grade = models.CharField(max_length=2)  # O, A+, A, B+, B, C, P, F
     grade_points = models.IntegerField()
     credits = models.IntegerField()

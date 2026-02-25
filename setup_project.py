@@ -11,7 +11,7 @@ django.setup()
 
 from core.models import User, Section
 from attendance.models import Course, AttendanceSession, AttendanceRecord, AttendanceEditRequest, TimetableSlot
-from remedial_classes.models import RemedialSession, RemedialAttendance
+from remedial_classes.models import RemedialSession
 from food_ordering.models import FoodItem, TimeSlot, OrderGroup, OrderItem
 from results.models import SemesterResult, CourseGrade
 from exams.models import Exam
@@ -158,19 +158,22 @@ def setup_project():
     for course in courses:
         for d in range(1, 4):
             session_date = today - timedelta(days=d)
-            # Find a slot for this course if it exists in timetable for a day
-            # For simplicity, we create sessions regardless of slot existence here 
-            # or we can link to an actual slot.
-            slot = TimetableSlot.objects.filter(course=course).first() 
-            session = AttendanceSession.objects.create(
-                course=course, 
-                date=session_date,
-                slot=slot
-            )
-            
-            for student in students:
-                is_present = random.random() > 0.15 # 85% attendance
-                AttendanceRecord.objects.create(session=session, student=student, is_present=is_present)
+            # Create a session for each section that takes this course
+            for section in sections:
+                slot = TimetableSlot.objects.filter(course=course, section=section).first()
+                if not slot:
+                    continue
+                    
+                session = AttendanceSession.objects.create(
+                    course=course, 
+                    date=session_date,
+                    slot=slot
+                )
+                
+                section_students = [s for s in students if s.section == section]
+                for student in section_students:
+                    is_present = random.random() > 0.15 # 85% attendance
+                    AttendanceRecord.objects.create(session=session, student=student, is_present=is_present)
 
     print("7. Creating Food Items & Time Slots...")
     food_data = [
@@ -260,8 +263,11 @@ def setup_project():
     )
     # Remedial Session
     RemedialSession.objects.create(
-        course=courses[0], faculty=courses[0].faculty, date=today + timedelta(days=5),
-        start_time="17:00:00", end_time="18:00:00", status='PENDING'
+        course=courses[0], 
+        faculty=courses[0].faculty, 
+        date=today + timedelta(days=5),
+        slot_number=random.randint(1, 7), 
+        status='PENDING'
     )
 
     print("\nProject Setup & Mock Data Generation Complete!")
