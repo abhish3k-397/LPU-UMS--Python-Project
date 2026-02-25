@@ -143,7 +143,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Trust your specific domain for this project
 # Trust domains from environment variables
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if os.getenv('CSRF_TRUSTED_ORIGINS') else []
+# CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if os.getenv('CSRF_TRUSTED_ORIGINS') else []
+CSRF_TRUSTED_ORIGINS=['https://ums.abhishekcodes.tech']
 
 # Force Django to recognize HTTPS from the Cloudflare/Nginx proxy
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
