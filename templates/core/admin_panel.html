@@ -1,97 +1,145 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2 class="h3 font-bold text-gray-800 dark:text-white">User Management Panel</h2>
-            <p class="text-gray-600 dark:text-gray-400">Review, approve, and manage user accounts.</p>
-        </div>
-    </div>
-
-    <!-- Users Table -->
-    <div class="card shadow-sm border-0 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
+<div class="row mb-10">
+    <div class="col-12 text-center">
         <div
-            class="card-header bg-white dark:bg-gray-800 border-bottom dark:border-gray-700 py-3 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 font-semibold dark:text-white">Registered Users</h5>
-            <span class="badge bg-primary">{{ users.count }} Total</span>
+            class="inline-block p-2 px-5 rounded-full bg-slate-100 dark:!bg-slate-800 text-xs sm:text-sm font-bold text-slate-600 dark:text-slate-300 mb-4 border border-slate-200 dark:border-slate-700 tracking-wide">
+            SYSTEM ADMINISTRATION
         </div>
-        <div class="table-responsive">
-            <table class="table table-hover mb-0 dark:table-dark align-middle">
-                <thead class="bg-gray-50 dark:bg-gray-700">
-                    <tr>
-                        <th
-                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
-                            Username</th>
-                        <th
-                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
-                            Email</th>
-                        <th
-                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
-                            Role</th>
-                        <th
-                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
-                            Status</th>
-                        <th
-                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
-                            Joined</th>
-                        <th
-                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300 text-end">
-                            Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                    {% for u in users %}
-                    <tr class="dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                        <td class="py-3 px-4 dark:text-gray-300 font-semibold">{{ u.username }}</td>
-                        <td class="py-3 px-4 dark:text-gray-300">{{ u.email }}</td>
-                        <td class="py-3 px-4 dark:text-gray-300">
-                            {% if u.role == 'ADMIN' %}
-                            <span class="badge bg-danger text-white">Admin</span>
-                            {% elif u.role == 'FACULTY' %}
-                            <span class="badge bg-primary text-white">Faculty</span>
-                            {% else %}
-                            <span class="badge bg-secondary text-white">Student</span>
-                            {% endif %}
-                        </td>
-                        <td class="py-3 px-4 dark:text-gray-300">
-                            {% if u.is_approved %}
-                            <span
-                                class="badge bg-success bg-opacity-25 text-success border border-success">Approved</span>
-                            {% else %}
-                            <span
-                                class="badge bg-warning bg-opacity-25 text-warning border border-warning">Pending</span>
-                            {% endif %}
-                        </td>
-                        <td class="py-3 px-4 dark:text-gray-300 text-sm">{{ u.date_joined|date:"M d, Y" }}</td>
-                        <td class="py-3 px-4 text-end">
-                            <div class="d-flex justify-content-end gap-2">
-                                {% if not u.is_approved %}
-                                <form method="post" action="{% url 'approve_user' u.id %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-success">Approve</button>
-                                </form>
-                                {% endif %}
+        <h2 class="text-4xl md:text-5xl font-black text-slate-800 dark:text-white mb-4 tracking-tight">
+            User <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-indigo-600">
+                Management Panel
+            </span>
+        </h2>
+        <p class="text-slate-500 dark:text-slate-400 font-medium max-w-2xl mx-auto">Review, approve, and manage user
+            accounts securely.</p>
+    </div>
+</div>
 
-                                {% if u != user %}
-                                <form method="post" action="{% url 'delete_user' u.id %}"
-                                    onsubmit="return confirm('Are you sure you want to delete this user?');">
-                                    {% csrf_token %}
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                                </form>
+<div class="row g-4 justify-content-center">
+    <div class="col-12 px-lg-4 pb-20">
+        <!-- Users Table -->
+        <div
+            class="bg-white dark:!bg-slate-800 rounded-[2.5rem] p-0 overflow-hidden border border-slate-100 dark:!border-slate-700/50 shadow-2xl shadow-slate-200/40 dark:shadow-none">
+            <div
+                class="p-8 border-b border-slate-100 dark:border-slate-700/50 flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div
+                        class="w-10 h-10 bg-blue-50 dark:!bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-600 dark:!text-blue-400 border border-blue-100 dark:border-blue-500/20 shadow-sm">
+                        <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                    </div>
+                    <h5 class="text-xl font-black text-slate-800 dark:!text-white m-0">Registered Users</h5>
+                </div>
+                <span
+                    class="px-4 py-1.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-black rounded-lg uppercase tracking-wider border border-blue-500/20">
+                    {{ users.count }} Total Accounts
+                </span>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-700/50">
+                            <th class="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Username
+                            </th>
+                            <th class="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Email</th>
+                            <th class="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Role</th>
+                            <th class="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Status
+                            </th>
+                            <th class="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest">Joined
+                            </th>
+                            <th
+                                class="py-4 px-6 text-xs font-black text-slate-400 uppercase tracking-widest text-right">
+                                Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+                        {% for u in users %}
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-800/80 transition-colors group">
+                            <td class="py-4 px-6">
+                                <span class="font-bold text-slate-800 dark:text-white">{{ u.username }}</span>
+                            </td>
+                            <td class="py-4 px-6 text-slate-500 dark:text-slate-400 text-sm font-medium">
+                                {{ u.email }}
+                            </td>
+                            <td class="py-4 px-6">
+                                {% if u.role == 'ADMIN' %}
+                                <span
+                                    class="px-3 py-1 bg-rose-500/10 text-rose-600 dark:text-rose-400 text-[10px] font-black rounded-lg uppercase tracking-wider border border-rose-500/20">Admin</span>
+                                {% elif u.role == 'FACULTY' %}
+                                <span
+                                    class="px-3 py-1 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-[10px] font-black rounded-lg uppercase tracking-wider border border-indigo-500/20">Faculty</span>
+                                {% else %}
+                                <span
+                                    class="px-3 py-1 bg-slate-500/10 text-slate-600 dark:text-slate-400 text-[10px] font-black rounded-lg uppercase tracking-wider border border-slate-500/20">Student</span>
                                 {% endif %}
-                            </div>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="6" class="text-center py-5 text-muted dark:text-gray-400">
-                            No users found.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                            </td>
+                            <td class="py-4 px-6">
+                                {% if u.is_approved %}
+                                <span
+                                    class="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-black rounded-lg uppercase tracking-wider border border-emerald-500/20">Approved</span>
+                                {% else %}
+                                <span
+                                    class="px-3 py-1 bg-orange-500/10 text-orange-600 dark:text-orange-400 text-[10px] font-black rounded-lg uppercase tracking-wider border border-orange-500/20 animate-pulse">Pending</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-4 px-6 text-slate-500 dark:text-slate-400 text-sm font-bold">
+                                {{ u.date_joined|date:"M d, Y" }}
+                            </td>
+                            <td class="py-4 px-6 text-right">
+                                <div
+                                    class="flex justify-end items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    {% if not u.is_approved %}
+                                    <form method="post" action="{% url 'approve_user' u.id %}" class="m-0">
+                                        {% csrf_token %}
+                                        <button type="submit"
+                                            class="p-2 bg-emerald-50 text-emerald-600 hover:bg-emerald-500 hover:text-white dark:bg-emerald-500/10 dark:hover:bg-emerald-500 dark:text-emerald-400 dark:hover:text-white rounded-lg transition-colors border border-emerald-100 dark:border-emerald-500/20"
+                                            title="Approve User">
+                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M5 13l4 4L19 7" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+
+                                    {% if u != user %}
+                                    <form method="post" action="{% url 'delete_user' u.id %}"
+                                        onsubmit="return confirm('Are you sure you want to delete this user?');"
+                                        class="m-0">
+                                        {% csrf_token %}
+                                        <button type="submit"
+                                            class="p-2 bg-rose-50 text-rose-600 hover:bg-rose-500 hover:text-white dark:bg-rose-500/10 dark:hover:bg-rose-500 dark:text-rose-400 dark:hover:text-white rounded-lg transition-colors border border-rose-100 dark:border-rose-500/20"
+                                            title="Delete User">
+                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
+                                    </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="py-20 text-center">
+                                <div class="flex flex-col items-center justify-center">
+                                    <div class="text-5xl mb-4">👻</div>
+                                    <h5 class="text-xl font-black text-slate-800 dark:!text-white mb-2">No Users Found
+                                    </h5>
+                                    <p class="text-slate-400 font-medium">The system is completely empty.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
