@@ -6,6 +6,7 @@ from attendance.models import Course
 from core.models import User, Section
 from django.db.models import Avg, Count
 import decimal
+import math
 
 @login_required
 def student_results(request):
@@ -60,15 +61,17 @@ def student_results(request):
                 'course_code': course.code,
                 'course_name': course.name,
                 'credits': 4, # Default standard credits
-                'grade': 'Awaited',
-                'grade_points': '-',
             })
             
     # Determine ongoing semester number
     ongoing_semester = (latest_result.semester + 1) if latest_result else 1
-    # Check if any graded courses belong to the highest semester, but we don't strictly bind Course to Semester in the model.
-    # To be safe, if there's a SemesterResult for ongoing_semester already (happens if some grades published), 
-    # we would ideally merge it, but for simplicity we can just render an "Ongoing Semester" block in the template.
+    ongoing_semester_in_results = False
+    
+    # If the latest result contains an active course's grade, then we are currently IN that semester
+    active_course_ids = [c.id for c in active_courses]
+    if latest_result and any(g.course_id in active_course_ids for g in latest_result.grades.all()):
+        ongoing_semester = latest_result.semester
+        ongoing_semester_in_results = True
 
     context = {
         'results': results,
@@ -76,7 +79,8 @@ def student_results(request):
         'total_credits': total_credits,
         'latest_semester': latest_result.semester if latest_result else 0,
         'awaited_courses': awaited_courses,
-        'ongoing_semester': ongoing_semester
+        'ongoing_semester': ongoing_semester,
+        'ongoing_semester_in_results': ongoing_semester_in_results,
     }
     
     return render(request, 'results/student_results.html', context)
@@ -226,9 +230,8 @@ def calculate_final_grades(request, course_id, section_id):
     # Pre-fetch marks
     all_marks = StudentExamMark.objects.filter(exam__in=all_exams).select_related('exam', 'student')
     
-    # Calculate attendance total possible for this course (or overall)
-    total_sessions = AttendanceSession.objects.filter(course=course).count()
-    
+    # Calculate universal active sessions if needed, but per-student calculation is safer
+    # since students might be in different sections with different class counts.
     student_net_marks = []
     
     for student in all_students:
@@ -263,21 +266,24 @@ def calculate_final_grades(request, course_id, section_id):
                 elif mark.exam.exam_type == 'END':
                     end_marks += mark.marks_obtained
                     
-        # Calculate weighted components
-        ca_component = (ca_marks / max_ca) * decimal.Decimal('25') if max_ca > 0 else decimal.Decimal('0')
-        mid_component = (mid_marks / max_mid) * decimal.Decimal('20') if max_mid > 0 else decimal.Decimal('0')
-        end_component = (end_marks / max_end) * decimal.Decimal('50') if max_end > 0 else decimal.Decimal('0')
+        # Calculate weighted components and enforce weight limits
+        ca_component = min((ca_marks / max_ca) * decimal.Decimal('25') if max_ca > 0 else decimal.Decimal('0'), decimal.Decimal('25.0'))
+        mid_component = min((mid_marks / max_mid) * decimal.Decimal('20') if max_mid > 0 else decimal.Decimal('0'), decimal.Decimal('20.0'))
+        end_component = min((end_marks / max_end) * decimal.Decimal('50') if max_end > 0 else decimal.Decimal('0'), decimal.Decimal('50.0'))
         
         # 4. Attendance component (5%)
         # Proportional calculation based on attendance percentage
         att_component = decimal.Decimal('0.0')
-        if total_sessions > 0:
+        student_total_sessions = AttendanceSession.objects.filter(course=course, slot__section=student.section).count()
+        if student_total_sessions > 0:
             present_count = AttendanceRecord.objects.filter(student=student, session__course=course, is_present=True).count()
-            att_percentage = (decimal.Decimal(present_count) / decimal.Decimal(total_sessions)) * 100
+            att_percentage = (decimal.Decimal(present_count) / decimal.Decimal(student_total_sessions)) * 100
             # Full 5 marks only for 100% attendance, scales down proportionally
             att_component = (att_percentage / decimal.Decimal('100.0')) * decimal.Decimal('5')
             
-        net_marks = ca_component + mid_component + end_component + att_component
+        raw_net_marks = ca_component + mid_component + end_component + att_component
+        net_marks = decimal.Decimal(math.ceil(raw_net_marks))
+        
         student_net_marks.append((student, net_marks, {
             'ca1': ca1_marks, 'ca2': ca2_marks, 'ca3': ca3_marks,
             'mid': mid_marks, 'end': end_marks,
@@ -294,7 +300,19 @@ def calculate_final_grades(request, course_id, section_id):
     
     course_credits = 4  # Default
     
-    for rank, (student, net_mark, comps) in enumerate(student_net_marks, start=1):
+    # Fetch students who already have published grades for this course
+    # We update their grades based on the new university-wide curve calculation
+    published_student_ids = set(CourseGrade.objects.filter(course=course).values_list('student_id', flat=True))
+    
+    previous_mark = None
+    tied_rank = 1
+    
+    for i, (student, net_mark, comps) in enumerate(student_net_marks, start=1):
+        if previous_mark is None or net_mark < previous_mark:
+            tied_rank = i
+            previous_mark = net_mark
+            
+        rank = tied_rank
         # Calculate percentile (number of people you scored better than or equal to, divided by total)
         percentile = ((total_students - rank + 1) / total_students) * 100
         
@@ -328,14 +346,23 @@ def calculate_final_grades(request, course_id, section_id):
             grade_letter = 'D'
             grade_points = 4
             
-        # Only publish grades for the students in the section managed by this faculty
-        if student.section != section:
+        # Only publish grades for the students in the section managed by this faculty,
+        # OR for students across the university who already have published grades (to retroactively update their curve)
+        if student.section != section and student.id not in published_student_ids:
             continue
             
+        # Determine target semester for the student
+        active_course_ids = Course.objects.filter(students=student).values_list('id', flat=True)
+        latest_res = SemesterResult.objects.filter(student=student).order_by('-semester').first()
+        
+        target_semester = (latest_res.semester + 1) if latest_res else 1
+        if latest_res and CourseGrade.objects.filter(semester_result=latest_res, course_id__in=active_course_ids).exists():
+            target_semester = latest_res.semester
+
         # Update or create course grade
         sem_result, _ = SemesterResult.objects.get_or_create(
             student=student,
-            semester=1, # Mock default
+            semester=target_semester,
             defaults={'sgpa': 0, 'cgpa': 0, 'credits_earned': 0, 'total_credits': 0}
         )
         
