@@ -2,239 +2,80 @@
 
 {% block content %}
 <div class="row mb-8">
-    <div class="col-12 px-lg-4">
-        <!-- Breadcrumb & Title Area -->
+    <div class="col-12 px-lg-4 text-center text-md-start">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div class="animate-in fade-in slide-in-from-left duration-700">
-                <nav class="mb-4">
+                <nav class="mb-4 flex items-center gap-2 justify-center md:justify-start">
                     <a href="{% url 'academic_hub' %}"
                         class="group inline-flex items-center gap-2 text-indigo-500 font-bold no-underline hover:text-indigo-600 transition-all">
                         <div
-                            class="w-8 h-8 rounded-full bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center group-hover:-translate-x-1 transition-transform">
+                            class="w-8 h-8 rounded-full bg-indigo-50 dark:!bg-indigo-500/10 flex items-center justify-center group-hover:-translate-x-1 transition-transform">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
                                     d="M15 19l-7-7 7-7" />
                             </svg>
                         </div>
-                        <span class="tracking-tight">Back to Academic Hub</span>
+                        <span class="tracking-tight">Back to Hub</span>
                     </a>
                 </nav>
-                <h2 class="text-4xl md:text-5xl font-black text-slate-800 dark:text-white mb-2 tracking-tight">
+                <h2 class="text-4xl md:text-5xl font-black text-slate-800 dark:!text-white mb-2 tracking-tight">
                     Manage <span
-                        class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600">Grades</span>
+                        class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600">Sections</span>
                 </h2>
-                <p class="text-slate-500 dark:text-slate-400 font-medium max-w-xl">
-                    Evaluation portal for <span class="font-bold text-slate-700 dark:text-slate-200">{{ course.name
-                        }}</span> ({{ course.code }}).
-                    All entries are synchronized with the university records.
+                <p class="text-slate-500 dark:!text-slate-400 font-medium max-w-xl mx-auto md:mx-0">
+                    Evaluation portal for
+                    <span class="font-bold text-slate-700 dark:!text-slate-200">
+                        {{ course.name }}
+                    </span>
+                    ({{ course.code }}).
+                    Select a section to evaluate student exams.
                 </p>
-            </div>
-
-            <div class="flex items-center gap-4 animate-in fade-in slide-in-from-right duration-700">
-                <div
-                    class="bg-white dark:bg-slate-800 px-6 py-4 rounded-[2rem] border border-slate-100 dark:border-slate-700 shadow-xl shadow-slate-200/50 dark:shadow-none flex items-center gap-4">
-                    <div
-                        class="w-12 h-12 bg-indigo-50 dark:bg-indigo-500/10 rounded-2xl flex items-center justify-center text-xl shadow-inner">
-                        🎓
-                    </div>
-                    <div>
-                        <span
-                            class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block mb-0 leading-tight">Enrolled</span>
-                        <span class="text-2xl font-black text-slate-800 dark:text-white leading-tight">{{
-                            student_data|length }} Students</span>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
 </div>
 
-<form action="{% url 'bulk_update_grades' course.id %}" method="POST" class="m-0">
-    {% csrf_token %}
-
-    <div class="row px-lg-4 mb-32">
-        <div class="col-12">
+<div class="row px-lg-4 mb-32">
+    <div class="col-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for section in sections %}
             <div
-                class="bg-white dark:bg-slate-800 rounded-[3rem] border border-slate-100 dark:border-slate-700/50 shadow-2xl shadow-slate-200/40 dark:shadow-none overflow-hidden animate-in fade-in zoom-in duration-500">
-
-                <!-- Desktop Table View -->
-                <div class="hidden md:block overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr
-                                class="bg-slate-50/50 dark:bg-slate-900/50 border-b border-slate-100 dark:border-slate-700/50">
-                                <th class="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest">
-                                    Student Details</th>
-                                <th
-                                    class="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">
-                                    UID / Section</th>
-                                <th
-                                    class="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">
-                                    Current</th>
-                                <th
-                                    class="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">
-                                    Assign Grade</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
-                            {% for item in student_data %}
-                            <tr class="group hover:bg-slate-50/50 dark:hover:bg-slate-900/30 transition-all">
-                                <td class="px-10 py-6">
-                                    <div class="flex items-center gap-5">
-                                        <div class="relative">
-                                            <div
-                                                class="w-12 h-12 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 rounded-2xl flex items-center justify-center font-black text-slate-500 dark:text-slate-300 shadow-inner group-hover:scale-110 transition-transform">
-                                                {{ item.student.username|slice:":1"|upper }}
-                                            </div>
-                                            <div
-                                                class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-4 border-white dark:border-slate-800 rounded-full">
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <p
-                                                class="text-base font-black text-slate-800 dark:text-white m-0 tracking-tight leading-none mb-1">
-                                                {{ item.student.get_full_name|default:item.student.username }}
-                                            </p>
-                                            <p
-                                                class="text-[10px] font-bold text-slate-400 m-0 uppercase tracking-widest opacity-80">
-                                                Active Scholar</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-10 py-6 text-center">
-                                    <div class="inline-flex flex-col items-center">
-                                        <span
-                                            class="font-mono text-xs font-black text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-600">
-                                            {{ item.student.uid|default:"N/A" }}
-                                        </span>
-                                        <span
-                                            class="text-[9px] font-black text-indigo-500 uppercase tracking-widest mt-2">
-                                            {{ item.student.section.name|default:"GEN-01" }}
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="px-10 py-6 text-center">
-                                    {% if item.grade_obj and item.grade_obj.grade %}
-                                    <div
-                                        class="inline-flex items-center justify-center w-10 h-10 rounded-2xl font-black text-sm shadow-lg shadow-emerald-500/10 border-2 {% if item.grade_obj.grade == 'F' %}bg-rose-50 text-rose-600 border-rose-100{% else %}bg-emerald-50 text-emerald-600 border-emerald-100{% endif %}">
-                                        {{ item.grade_obj.grade }}
-                                    </div>
-                                    {% else %}
-                                    <span
-                                        class="inline-flex items-center gap-1.5 text-[10px] font-black text-slate-300 uppercase tracking-widest italic">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-slate-200"></span>
-                                        Pending
-                                    </span>
-                                    {% endif %}
-                                </td>
-                                <td class="px-10 py-6 text-right">
-                                    <div class="relative inline-block w-48">
-                                        <select name="grade_{{ item.student.id }}"
-                                            class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 rounded-2xl px-5 py-3 font-black text-slate-800 dark:text-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none appearance-none cursor-pointer group-hover:border-indigo-300 dark:group-hover:border-indigo-500/50">
-                                            <option value="">Choose Grade</option>
-                                            {% for opt in grade_options %}
-                                            <option value="{{ opt }}" {% if item.grade_obj and item.grade_obj.grade == opt %}selected{% endif %}>Grade: {{ opt }}</option>
-                                            {% endfor %}
-                                        </select>
-                                        <div
-                                            class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
-                                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                                    d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                                <td colspan="4" class="px-10 py-20 text-center">
-                                    <div class="text-5xl mb-4">Empty</div>
-                                    <p class="text-slate-400 font-bold uppercase tracking-widest text-sm">No students
-                                        found in this course module</p>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                class="bg-white dark:!bg-slate-800 rounded-[2.5rem] overflow-hidden border border-slate-100 dark:!border-slate-700/50 shadow-2xl shadow-slate-200/40 dark:!shadow-none transition-all group hover:-translate-y-2 animate-in fade-in zoom-in duration-500 relative">
+                <div
+                    class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity">
                 </div>
-
-                <!-- Mobile Card View -->
-                <div class="md:hidden divide-y divide-slate-100 dark:divide-slate-700/50">
-                    {% for item in student_data %}
-                    <div class="p-8">
-                        <div class="flex items-center gap-4 mb-6">
-                            <div
-                                class="w-14 h-14 bg-slate-100 dark:bg-slate-700 rounded-2xl flex items-center justify-center font-black text-xl text-slate-500">
-                                {{ item.student.username|slice:":1"|upper }}
-                            </div>
-                            <div>
-                                <h4 class="text-lg font-black text-slate-800 dark:text-white m-0 tracking-tight">{{
-                                    item.student.get_full_name|default:item.student.username }}</h4>
-                                <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{{
-                                    item.student.uid|default:"NO-UID" }}</span>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div
-                                class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-                                <span
-                                    class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Current
-                                    Status</span>
-                                <span
-                                    class="text-xs font-black {% if item.grade_obj %}text-emerald-500{% else %}text-slate-300{% endif %}">
-                                    {% if item.grade_obj %}{{ item.grade_obj.grade }}{% else %}PENDING{% endif %}
-                                </span>
-                            </div>
-                            <div
-                                class="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl border border-slate-100 dark:border-slate-800">
-                                <span
-                                    class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-1">Section</span>
-                                <span class="text-xs font-black text-slate-600 dark:text-slate-300">{{
-                                    item.student.section.name|default:"General" }}</span>
-                            </div>
-                        </div>
-
-                        <div class="relative">
-                            <select name="grade_{{ item.student.id }}"
-                                class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-100 dark:border-slate-700 rounded-2xl px-5 py-4 font-black text-slate-800 dark:text-white focus:border-indigo-500 outline-none appearance-none cursor-pointer transition-all">
-                                <option value="">Select Final Grade</option>
-                                {% for opt in grade_options %}
-                                <option value="{{ opt }}" {% if item.grade_obj and item.grade_obj.grade == opt %}selected{% endif %}>Grade {{ opt }}</option>
-                                {% endfor %}
-                            </select>
-                            <div
-                                class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-slate-400">
-                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                                        d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </div>
+                <div class="p-8">
+                    <div class="flex justify-between items-start mb-6">
+                        <div
+                            class="w-14 h-14 bg-indigo-50 dark:!bg-indigo-500/10 rounded-2xl flex items-center justify-center text-2xl border border-indigo-100 dark:!border-indigo-500/20 shadow-inner group-hover:scale-110 transition-transform">
+                            👥
                         </div>
                     </div>
-                    {% endfor %}
+
+                    <h4 class="text-2xl font-black text-slate-800 dark:!text-white mb-2 tracking-tight leading-tight">
+                        {{ section.name }}
+                    </h4>
+                    <p class="text-sm font-bold text-slate-500 dark:!text-slate-400 mb-6">Manage internal and external
+                        continuous assessments</p>
+
+                    <a href="{% url 'manage_section_exams' course.id section.id %}"
+                        class="block w-full py-4 bg-slate-50 hover:bg-indigo-500 dark:!bg-slate-900/50 dark:hover:!bg-indigo-500 text-slate-600 hover:text-white dark:!text-slate-300 dark:hover:!text-white text-center font-black rounded-2xl shadow-lg hover:shadow-indigo-500/25 transition-all outline-none border border-slate-200 dark:!border-slate-700 hover:border-transparent no-underline">
+                        Evaluate Section
+                    </a>
                 </div>
-
             </div>
+            {% empty %}
+            <div
+                class="col-span-full text-center py-20 bg-slate-50 dark:!bg-slate-900/50 rounded-[3rem] border-2 border-dashed border-slate-200 dark:!border-slate-700">
+                <div class="text-5xl mb-6">📭</div>
+                <h3 class="text-2xl font-black text-slate-800 dark:!text-white mb-2">No Sections Found</h3>
+                <p class="text-slate-400 font-medium max-w-sm mx-auto">No students have been assigned to any sections
+                    for this course.</p>
+            </div>
+            {% endfor %}
         </div>
     </div>
-
-    <!-- Persistent Bottom Action Bar -->
-    <div class="fixed bottom-0 left-0 right-0 z-40 p-4 md:p-8 pointer-events-none">
-        <div class="max-w-4xl mx-auto flex justify-center pointer-events-auto">
-            <button type="submit"
-                class="group w-full md:w-auto px-12 py-6 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:scale-[1.05] hover:shadow-2xl hover:shadow-indigo-500/40 text-white font-black text-xl rounded-[2.5rem] shadow-2xl shadow-indigo-500/20 transition-all duration-500 border-none flex items-center justify-center gap-4">
-                <span>Synchronize & Save Records</span>
-                <svg class="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
-                        d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                </svg>
-            </button>
-        </div>
-    </div>
-</form>
+</div>
 
 <style>
     @keyframes fade-in {
@@ -250,16 +91,6 @@
     @keyframes slide-in-from-left {
         from {
             transform: translateX(-20px);
-        }
-
-        to {
-            transform: translateX(0);
-        }
-    }
-
-    @keyframes slide-in-from-right {
-        from {
-            transform: translateX(20px);
         }
 
         to {
@@ -287,10 +118,6 @@
 
     .slide-in-from-left {
         animation-name: slide-in-from-left;
-    }
-
-    .slide-in-from-right {
-        animation-name: slide-in-from-right;
     }
 
     .zoom-in {

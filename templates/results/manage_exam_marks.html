@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row mb-8">
+    <div class="col-12 px-lg-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="animate-in fade-in slide-in-from-left duration-700">
+                <nav class="mb-4 flex items-center gap-2">
+                    <a href="{% url 'manage_section_exams' course.id section.id %}"
+                        class="group inline-flex items-center gap-2 text-indigo-500 font-bold no-underline hover:text-indigo-600 transition-all">
+                        <div
+                            class="w-8 h-8 rounded-full bg-indigo-50 dark:!bg-indigo-500/10 flex items-center justify-center group-hover:-translate-x-1 transition-transform">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                    d="M15 19l-7-7 7-7" />
+                            </svg>
+                        </div>
+                        <span class="tracking-tight">Back to Exams</span>
+                    </a>
+                </nav>
+                <h2 class="text-4xl md:text-5xl font-black text-slate-800 dark:!text-white mb-2 tracking-tight">
+                    Enter <span
+                        class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600">Marks</span>
+                </h2>
+                <p class="text-slate-500 dark:!text-slate-400 font-medium max-w-xl">
+                    <span class="font-bold text-slate-700 dark:!text-slate-200">{{ course.code }}</span>
+                    - {{ section.name }} - <span class="font-bold text-slate-700 dark:!text-slate-200">
+                        {{ exam.get_exam_type_display }} </span>
+                </p>
+            </div>
+            <div class="flex items-center gap-4 animate-in fade-in slide-in-from-right duration-700">
+                <div
+                    class="bg-white dark:!bg-slate-800 px-6 py-4 rounded-[2rem] border border-slate-100 dark:!border-slate-700 shadow-xl shadow-slate-200/50 dark:!shadow-none flex items-center gap-4">
+                    <div
+                        class="w-12 h-12 bg-indigo-50 dark:!bg-indigo-500/10 rounded-2xl flex items-center justify-center text-xl shadow-inner">
+                        🎯
+                    </div>
+                    <div>
+                        <span
+                            class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block mb-0 leading-tight">Maximum</span>
+                        <span class="text-2xl font-black text-slate-800 dark:!text-white leading-tight">
+                            {{ exam.max_marks }} Marks</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form action="{% url 'manage_exam_marks' course.id section.id exam.id %}" method="POST" class="m-0">
+    {% csrf_token %}
+
+    <div class="row px-lg-4 mb-32">
+        <div class="col-12">
+            <div
+                class="bg-white dark:!bg-slate-800 rounded-[3rem] border border-slate-100 dark:!border-slate-700/50 shadow-2xl shadow-slate-200/40 dark:!shadow-none overflow-hidden animate-in fade-in zoom-in duration-500">
+
+                <!-- Desktop Table View -->
+                <div class="hidden md:block overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr
+                                class="bg-slate-50/50 dark:!bg-slate-900/50 border-b border-slate-100 dark:!border-slate-700/50">
+                                <th class="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest">
+                                    Student Details</th>
+                                <th
+                                    class="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">
+                                    UID</th>
+                                <th
+                                    class="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">
+                                    Assign Marks (Out of {{ exam.max_marks }})</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 dark:!divide-slate-700/50">
+                            {% for item in student_data %}
+                            <tr class="group hover:bg-slate-50/50 dark:hover:!bg-slate-900/30 transition-all">
+                                <td class="px-10 py-6">
+                                    <div class="flex items-center gap-5">
+                                        <div class="relative">
+                                            <div
+                                                class="w-12 h-12 bg-gradient-to-br from-slate-100 to-slate-200 dark:!from-slate-700 dark:!to-slate-600 rounded-2xl flex items-center justify-center font-black text-slate-500 dark:!text-slate-300 shadow-inner group-hover:scale-110 transition-transform">
+                                                {{ item.student.username|slice:":1"|upper }}
+                                            </div>
+                                            <div
+                                                class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-4 border-white dark:!border-slate-800 rounded-full">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <p
+                                                class="text-base font-black text-slate-800 dark:!text-white m-0 tracking-tight leading-none mb-1">
+                                                {{ item.student.get_full_name|default:item.student.username }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="px-10 py-6 text-center">
+                                    <span
+                                        class="font-mono text-xs font-black text-slate-600 dark:!text-slate-300 bg-slate-100 dark:!bg-slate-700 px-3 py-1 rounded-lg border border-slate-200 dark:!border-slate-600">
+                                        {{ item.student.uid|default:"N/A" }}
+                                    </span>
+                                </td>
+                                <td class="px-10 py-6 text-right">
+                                    <div class="relative inline-block w-48">
+                                        {% if item.mark_obj %}
+                                        <div id="display_{{ item.student.id }}"
+                                            class="flex items-center justify-end gap-3 text-emerald-600 dark:!text-emerald-400 font-black text-xl">
+                                            <span>{{ item.mark_obj.marks_obtained }}</span>
+                                            <button type="button"
+                                                onclick="document.getElementById('display_{{ item.student.id }}').classList.add('hidden'); document.getElementById('input_{{ item.student.id }}').classList.remove('hidden'); document.getElementById('input_{{ item.student.id }}').focus();"
+                                                class="p-2 hover:bg-emerald-100 dark:hover:!bg-emerald-500/20 rounded-lg transition-colors text-slate-400 hover:text-emerald-600 dark:hover:!text-emerald-400">
+                                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                        <input type="number" step="0.01" min="0" max="{{ exam.max_marks }}"
+                                            name="mark_{{ item.student.id }}" id="input_{{ item.student.id }}"
+                                            value="{{ item.mark_obj.marks_obtained }}"
+                                            class="hidden w-full bg-slate-50 dark:!bg-slate-900 border-2 border-slate-100 dark:!border-slate-700 rounded-2xl px-5 py-3 font-black text-slate-800 dark:!text-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-right desktop-only-input">
+                                        {% else %}
+                                        <input type="number" step="0.01" min="0" max="{{ exam.max_marks }}"
+                                            name="mark_{{ item.student.id }}" placeholder="0.00"
+                                            class="w-full bg-slate-50 dark:!bg-slate-900 border-2 border-slate-100 dark:!border-slate-700 rounded-2xl px-5 py-3 font-black text-slate-800 dark:!text-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-right desktop-only-input">
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="3" class="px-10 py-20 text-center">
+                                    <div class="text-5xl mb-4">Empty</div>
+                                    <p class="text-slate-400 font-bold uppercase tracking-widest text-sm">No students
+                                        found in this section</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Mobile Card View -->
+                <div class="md:hidden divide-y divide-slate-100 dark:!divide-slate-700/50">
+                    {% for item in student_data %}
+                    <div class="p-8">
+                        <div class="flex items-center gap-4 mb-6">
+                            <div
+                                class="w-14 h-14 bg-slate-100 dark:!bg-slate-700 rounded-2xl flex items-center justify-center font-black text-xl text-slate-500">
+                                {{ item.student.username|slice:":1"|upper }}
+                            </div>
+                            <div>
+                                <h4 class="text-lg font-black text-slate-800 dark:!text-white m-0 tracking-tight">{{
+                                    item.student.get_full_name|default:item.student.username }}</h4>
+                                <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">{{
+                                    item.student.uid|default:"NO-UID" }}</span>
+                            </div>
+                        </div>
+
+                        <div class="relative">
+                            <label
+                                class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2">Marks
+                                (Max {{ exam.max_marks }})</label>
+                            {% if item.mark_obj %}
+                            <div id="mobile_display_{{ item.student.id }}"
+                                class="flex items-center justify-between bg-emerald-50 dark:!bg-emerald-500/10 border-2 border-emerald-100 dark:!border-emerald-500/20 rounded-2xl px-5 py-3">
+                                <span class="font-black text-emerald-600 dark:!text-emerald-400 text-lg">{{
+                                    item.mark_obj.marks_obtained }}</span>
+                                <button type="button" onclick="
+                                        document.getElementById('mobile_display_{{ item.student.id }}').classList.add('hidden'); 
+                                        let mInput = document.getElementById('mobile_input_{{ item.student.id }}');
+                                        mInput.classList.remove('hidden'); 
+                                        mInput.disabled = false;
+                                        document.querySelector('#desktop_row_{{ item.student.id }} input[name=\'mark_{{ item.student.id }}\']').disabled = true;
+                                        mInput.focus();
+                                    "
+                                    class="p-2 hover:bg-emerald-100 dark:hover:!bg-emerald-500/20 rounded-lg transition-colors text-slate-400 hover:text-emerald-600 dark:hover:!text-emerald-400">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <input type="number" step="0.01" min="0" max="{{ exam.max_marks }}"
+                                name="mark_{{ item.student.id }}" id="mobile_input_{{ item.student.id }}"
+                                value="{{ item.mark_obj.marks_obtained }}" disabled
+                                class="hidden w-full bg-slate-50 dark:!bg-slate-900 border-2 border-slate-100 dark:!border-slate-700 rounded-2xl px-5 py-4 font-black text-slate-800 dark:!text-white focus:border-indigo-500 outline-none transition-all">
+                            {% else %}
+                            <input type="number" step="0.01" min="0" max="{{ exam.max_marks }}"
+                                name="mark_{{ item.student.id }}" placeholder="0.00"
+                                class="w-full bg-slate-50 dark:!bg-slate-900 border-2 border-slate-100 dark:!border-slate-700 rounded-2xl px-5 py-4 font-black text-slate-800 dark:!text-white focus:border-indigo-500 outline-none transition-all mobile-only-input">
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Persistent Bottom Action Bar -->
+    <div class="fixed bottom-0 left-0 right-0 z-40 p-4 md:p-8 pointer-events-none">
+        <div class="max-w-4xl mx-auto flex justify-center pointer-events-auto">
+            <button type="submit"
+                class="group w-full md:w-auto px-12 py-6 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:scale-[1.05] hover:shadow-2xl hover:shadow-indigo-500/40 text-white font-black text-xl rounded-[2.5rem] shadow-2xl shadow-indigo-500/20 transition-all duration-500 border-none flex items-center justify-center gap-4">
+                <span>Save Final Marks</span>
+                <svg class="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.querySelector('form');
+
+        form.addEventListener('submit', () => {
+            const isMobile = window.innerWidth < 768; // Tailwind md breakpoint
+
+            if (isMobile) {
+                // We are on mobile, disable all desktop inputs
+                document.querySelectorAll('.desktop-only-input').forEach(input => input.disabled = true);
+                document.querySelectorAll('.mobile-only-input').forEach(input => input.disabled = false);
+            } else {
+                // We are on desktop, disable all mobile inputs
+                document.querySelectorAll('.mobile-only-input').forEach(input => input.disabled = true);
+                document.querySelectorAll('.desktop-only-input').forEach(input => input.disabled = false);
+            }
+        });
+    });
+</script>
+
+<style>
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slide-in-from-left {
+        from {
+            transform: translateX(-20px);
+        }
+
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slide-in-from-right {
+        from {
+            transform: translateX(20px);
+        }
+
+        to {
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes zoom-in {
+        from {
+            transform: scale(0.95);
+        }
+
+        to {
+            transform: scale(1);
+        }
+    }
+
+    .animate-in {
+        animation-fill-mode: both;
+    }
+
+    .fade-in {
+        animation-name: fade-in;
+    }
+
+    .slide-in-from-left {
+        animation-name: slide-in-from-left;
+    }
+
+    .slide-in-from-right {
+        animation-name: slide-in-from-right;
+    }
+
+    .zoom-in {
+        animation-name: zoom-in;
+    }
+</style>
+{% endblock %}

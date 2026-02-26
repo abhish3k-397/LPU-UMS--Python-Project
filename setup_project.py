@@ -13,7 +13,7 @@ from core.models import User, Section
 from attendance.models import Course, AttendanceSession, AttendanceRecord, AttendanceEditRequest, TimetableSlot
 from remedial_classes.models import RemedialSession
 from food_ordering.models import FoodItem, TimeSlot, OrderGroup, OrderItem
-from results.models import SemesterResult, CourseGrade
+from results.models import SemesterResult, CourseGrade, Exam as ResultExam, StudentExamMark
 from exams.models import Exam
 from django.core.files.base import ContentFile
 
@@ -212,46 +212,110 @@ def setup_project():
         exam.syllabus.save(f'syllabus_{course.code}.txt', ContentFile("Mock Syllabus Content"))
         exam.resources.save(f'resource_{course.code}.txt', ContentFile("Mock Resource Content"))
 
+        # Create detailed results Exams and Student marks
+        for section in sections:
+            result_exams = []
+            for e_type, max_m in [('CA1', 30), ('CA2', 30), ('CA3', 30), ('MID', 30), ('END', 60)]:
+                re = ResultExam.objects.create(course=course, section=section, exam_type=e_type, max_marks=max_m)
+                result_exams.append((re, max_m))
+                
+            section_students = [s for s in students if s.section == section]
+            for s in section_students:
+                for re, max_m in result_exams:
+                    # Random mark between 40% and 100%
+                    StudentExamMark.objects.create(
+                        exam=re,
+                        student=s,
+                        marks_obtained=round(random.uniform(max_m * 0.4, max_m), 2)
+                    )
+
     print("9. Creating Historical Results (3 Semesters)...")
     sem_courses_pool = {
         1: [("Programming Fundamentals", "CSE101", 4), ("Mathematics-I", "MTH101", 4), ("English-I", "ENG101", 2)],
         2: [("Data Structures", "CSE201", 4), ("Physics", "PHY101", 4), ("Logic Design", "ECE201", 3)],
         3: [("Operating Systems", "CSE301", 4), ("DBMS", "CSE303", 4), ("Discrete Math", "MTH301", 4)]
     }
-    grades_map = {'O': 10, 'A+': 9, 'A': 8, 'B+': 7, 'B': 6, 'C': 5, 'P': 4}
+    grades_map = {'O': 10, 'A+': 9, 'A': 8, 'B+': 7, 'B': 6, 'C': 5, 'D': 4, 'E': 0}
 
-    for student in students:
-        total_points = 0
-        total_credits = 0
-        for sem in range(1, 4):
-            s_courses = sem_courses_pool[sem]
-            s_credits = sum(c[2] for c in s_courses)
-            s_points = 0
-            
-            # Create a list of grades first to calculate SGPA
-            grades_to_create = []
+    student_histories = {s.id: {'total_points': 0, 'total_credits': 0} for s in students}
+
+    for sem in range(1, 4):
+        s_courses = sem_courses_pool[sem]
+        s_credits = sum(c[2] for c in s_courses)
+        
+        # We need to collect marks per course to calculate percentiles across the cohort
+        course_student_marks = {c_code: [] for _, c_code, _ in s_courses}
+        
+        for student in students:
             for c_name, c_code, c_credits in s_courses:
-                grade = random.choice(list(grades_map.keys()))
-                g_p = grades_map[grade]
-                grades_to_create.append({
-                    'name': c_name, 'code': c_code, 'grade': grade, 'points': g_p, 'credits': c_credits
+                # Mock component marks uniformly distributed
+                perf = random.uniform(0.3, 0.95)
+                
+                ca1 = round(30 * random.uniform(perf, min(perf+0.2, 1.0)), 2)
+                ca2 = round(30 * random.uniform(perf, min(perf+0.2, 1.0)), 2)
+                ca3 = round(30 * random.uniform(perf, min(perf+0.2, 1.0)), 2)
+                mid = round(30 * random.uniform(perf, min(perf+0.2, 1.0)), 2)
+                end = round(60 * random.uniform(perf, min(perf+0.2, 1.0)), 2)
+                
+                ca_w = round(((ca1 + ca2 + ca3) / 90) * 25, 2)
+                mid_w = round((mid / 30) * 20, 2)
+                end_w = round((end / 60) * 50, 2)
+                att_w = round(random.uniform(3, 5), 2)
+                net = round(ca_w + mid_w + end_w + att_w, 2)
+                
+                course_student_marks[c_code].append({
+                    'student': student, 'name': c_name, 'code': c_code, 'credits': c_credits,
+                    'ca1': ca1, 'ca2': ca2, 'ca3': ca3, 'mid': mid, 'end': end,
+                    'ca_w': ca_w, 'mid_w': mid_w, 'end_w': end_w, 'att_w': att_w, 'net': net
                 })
-                s_points += (g_p * c_credits)
+        
+        # Now grade them relatively
+        student_sem_points = {s.id: 0 for s in students}
+        student_grades_to_create = {s.id: [] for s in students}
+        
+        for c_code, marks_list in course_student_marks.items():
+            marks_list.sort(key=lambda x: x['net'], reverse=True)
+            total_s = len(marks_list)
+            for rank, m in enumerate(marks_list, start=1):
+                percentile = ((total_s - rank + 1) / total_s) * 100
+                if m['net'] < 40: grade, g_p = 'E', 0
+                elif percentile >= 90: grade, g_p = 'O', 10
+                elif percentile >= 80: grade, g_p = 'A+', 9
+                elif percentile >= 70: grade, g_p = 'A', 8
+                elif percentile >= 55: grade, g_p = 'B+', 7
+                elif percentile >= 40: grade, g_p = 'B', 6
+                elif percentile >= 25: grade, g_p = 'C', 5
+                elif percentile >= 10: grade, g_p = 'D', 4
+                else: grade, g_p = 'D', 4
+                
+                student_id = m['student'].id
+                student_sem_points[student_id] += g_p * m['credits']
+                m['grade'] = grade
+                m['points'] = g_p
+                student_grades_to_create[student_id].append(m)
+                
+        # Now create SemesterResult and CourseGrade for each student
+        for student in students:
+            s_id = student.id
+            sgpa = round(student_sem_points[s_id] / s_credits, 2) if s_credits > 0 else 0
+            student_histories[s_id]['total_points'] += student_sem_points[s_id]
+            student_histories[s_id]['total_credits'] += s_credits
             
-            sgpa = round(s_points / s_credits, 2)
-            total_points += s_points
-            total_credits += s_credits
-            cgpa = round(total_points / total_credits, 2)
-
+            cgpa = round(student_histories[s_id]['total_points'] / student_histories[s_id]['total_credits'], 2)
+            earned_creds = sum(g['credits'] for g in student_grades_to_create[s_id] if g['grade'] != 'E')
+            
             res = SemesterResult.objects.create(
-                student=student, semester=sem, credits_earned=s_credits, total_credits=s_credits,
-                sgpa=sgpa, cgpa=cgpa
+                student=student, semester=sem, credits_earned=earned_creds, 
+                total_credits=s_credits, sgpa=sgpa, cgpa=cgpa
             )
             
-            for g in grades_to_create:
+            for g in student_grades_to_create[s_id]:
                 CourseGrade.objects.create(
                     semester_result=res, course_name=g['name'], course_code=g['code'],
-                    grade=g['grade'], grade_points=g['points'], credits=g['credits']
+                    grade=g['grade'], grade_points=g['points'], credits=g['credits'],
+                    ca1_marks=g['ca1'], ca2_marks=g['ca2'], ca3_marks=g['ca3'],
+                    mid_marks=g['mid'], end_marks=g['end'], ca_weighted=g['ca_w'], mid_weighted=g['mid_w'],
+                    end_weighted=g['end_w'], att_weighted=g['att_w'], net_marks=g['net']
                 )
 
     print("10. Creating Sample Requests...")
