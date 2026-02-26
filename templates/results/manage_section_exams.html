@@ -30,7 +30,7 @@
                     - Section
                     <span class="font-bold text-slate-700 dark:!text-slate-200">
                         {{ section.name }}
-                    </span>.
+                    </span>
                 </p>
             </div>
         </div>
@@ -154,8 +154,8 @@
             <h3 class="text-2xl font-black text-slate-800 dark:!text-white m-0 tracking-tight">Published <span
                     class="text-emerald-500">Grades</span></h3>
             <span
-                class="bg-emerald-100 dark:!bg-emerald-500/20 text-emerald-600 dark:!text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">{{
-                published_grades|length }} Students</span>
+                class="bg-emerald-100 dark:!bg-emerald-500/20 text-emerald-600 dark:!text-emerald-400 text-xs font-bold px-3 py-1 rounded-full">
+                {{published_grades|length }} Students</span>
         </div>
 
         <div
@@ -189,10 +189,10 @@
                                         {{ grade.student.username|slice:":1"|upper }}
                                     </div>
                                     <div>
-                                        <p class="text-sm font-black text-slate-800 dark:!text-white m-0">{{
-                                            grade.student.get_full_name|default:grade.student.username }}</p>
-                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{
-                                            grade.student.uid|default:"NO UID" }}</p>
+                                        <p class="text-sm font-black text-slate-800 dark:!text-white m-0">
+                                            {{ grade.student.get_full_name|default:grade.student.username }}</p>
+                                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                            {{ grade.student.uid|default:"NO UID" }}</p>
                                     </div>
                                 </div>
                             </td>
