@@ -32,6 +32,21 @@
                 <div
                     class="bg-white dark:!bg-slate-800 px-6 py-4 rounded-[2rem] border border-slate-100 dark:!border-slate-700 shadow-xl shadow-slate-200/50 dark:!shadow-none flex items-center gap-4">
                     <div
+                        class="w-12 h-12 bg-blue-50 dark:!bg-blue-500/10 rounded-2xl flex items-center justify-center text-xl shadow-inner text-blue-500">
+                        📍
+                    </div>
+                    <div>
+                        <span
+                            class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block mb-0 leading-tight">Location</span>
+                        <span class="text-xl font-black text-slate-800 dark:!text-white leading-tight">
+                            {% if exam.classroom %}{{ exam.classroom.block.name }} - {{ exam.classroom.room_number }}{%
+                            else %}TBD{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div
+                    class="bg-white dark:!bg-slate-800 px-6 py-4 rounded-[2rem] border border-slate-100 dark:!border-slate-700 shadow-xl shadow-slate-200/50 dark:!shadow-none flex items-center gap-4">
+                    <div
                         class="w-12 h-12 bg-indigo-50 dark:!bg-indigo-500/10 rounded-2xl flex items-center justify-center text-xl shadow-inner">
                         🎯
                     </div>

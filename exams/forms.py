@@ -5,13 +5,14 @@ from attendance.models import Course
 class ExamForm(forms.ModelForm):
     class Meta:
         model = Exam
-        fields = ['course', 'exam_type', 'date', 'syllabus', 'resources']
+        fields = ['course', 'exam_type', 'date', 'classroom', 'syllabus', 'resources']
         widgets = {
             'date': forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-input w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white'}),
             'course': forms.Select(attrs={'class': 'form-select w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white'}),
             'exam_type': forms.Select(attrs={'class': 'form-select w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white'}),
             'syllabus': forms.FileInput(attrs={'class': 'form-input w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white', 'accept': '.pdf,.doc,.docx'}),
             'resources': forms.FileInput(attrs={'class': 'form-input w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white', 'accept': '.pdf,.zip,.rar'}),
+            'classroom': forms.Select(attrs={'class': 'form-select w-full rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-white'}),
         }
 
     def __init__(self, *args, **kwargs):

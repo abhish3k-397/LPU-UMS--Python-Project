@@ -9,6 +9,7 @@ class RemedialSession(models.Model):
     faculty = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, limit_choices_to={'role': 'FACULTY'})
     date = models.DateField()
     slot_number = models.IntegerField(help_text="Slot 1-7")
+    classroom = models.ForeignKey('resource_management.Classroom', on_delete=models.SET_NULL, null=True, blank=True, related_name='remedial_sessions')
     
     STATUS_CHOICES = [
         ('PENDING', 'Pending Admin Approval'),

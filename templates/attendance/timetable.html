@@ -105,6 +105,11 @@
                                     class="text-[9px] font-bold text-slate-500 uppercase px-2 py-1 bg-slate-100 dark:bg-slate-700/50 rounded-lg flex items-center gap-1 shadow-inner">
                                     📍 {{ c.classroom.block.name }}-{{ c.classroom.room_number }}
                                 </div>
+                                {% elif r_sess.classroom %}
+                                <div
+                                    class="text-[9px] font-bold text-slate-500 uppercase px-2 py-1 bg-slate-100 dark:bg-slate-700/50 rounded-lg flex items-center gap-1 shadow-inner">
+                                    📍 {{ r_sess.classroom.block.name }}-{{ r_sess.classroom.room_number }}
+                                </div>
                                 {% endif %}
                             </div>
                         </div>

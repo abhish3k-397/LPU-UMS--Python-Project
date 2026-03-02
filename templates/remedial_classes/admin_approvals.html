@@ -73,6 +73,14 @@
                                     <span class="text-sm font-black text-slate-700 dark:!text-white">{{
                                         session.time_range }}</span>
                                 </div>
+                                {% if session.classroom %}
+                                <div class="pl-2 border-l border-slate-200 dark:!border-slate-700 ml-2">
+                                    <span
+                                        class="block text-[8px] font-black text-slate-400 uppercase tracking-widest mb-1">Room</span>
+                                    <span class="text-sm font-black text-slate-700 dark:!text-white">{{
+                                        session.classroom.block.name }}-{{ session.classroom.room_number }}</span>
+                                </div>
+                                {% endif %}
                             </div>
                         </div>
 

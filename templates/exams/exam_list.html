@@ -92,6 +92,24 @@
                                 </span>
                             </p>
                         </div>
+
+                        <!-- Location -->
+                        <div class="flex items-center gap-4 px-2">
+                            <div
+                                class="w-10 h-10 {% if exam.classroom %}bg-blue-50 dark:bg-blue-500/10 text-blue-500{% else %}bg-slate-50 dark:bg-slate-500/10 text-slate-400{% endif %} rounded-full flex items-center justify-center">
+                                📍
+                            </div>
+                            <p class="text-sm font-medium text-slate-500 dark:text-slate-400">
+                                Location: <span
+                                    class="{% if exam.classroom %}text-slate-700 dark:text-slate-200 font-bold{% else %}text-rose-400 font-black italic uppercase text-[10px] tracking-widest{% endif %}">
+                                    {% if exam.classroom %}
+                                    {{ exam.classroom.block.name }} - {{ exam.classroom.room_number }}
+                                    {% else %}
+                                    Pending Assignment
+                                    {% endif %}
+                                </span>
+                            </p>
+                        </div>
                     </div>
 
                     <!-- Action Buttons -->

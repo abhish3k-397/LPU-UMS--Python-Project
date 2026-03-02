@@ -14,6 +14,7 @@ class Exam(models.Model):
     date = models.DateTimeField()
     syllabus = models.FileField(upload_to='exams/syllabi/', null=True, blank=True)
     resources = models.FileField(upload_to='exams/resources/', null=True, blank=True)
+    classroom = models.ForeignKey('resource_management.Classroom', on_delete=models.SET_NULL, null=True, blank=True, related_name='exams')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

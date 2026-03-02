@@ -12,28 +12,19 @@ def faculty_remedial(request):
         return redirect('dashboard')
         
     sessions = RemedialSession.objects.filter(faculty=request.user).order_by('-date', '-slot_number')
-    courses = Course.objects.filter(faculty=request.user)
-    
-    # Generate data map for cascading sections (Course -> Sections)
-    data_map = {}
-    for course in courses:
-        course_sections = Section.objects.filter(timetable__course=course).distinct()
-        section_list = []
-        for sec in course_sections:
-            section_list.append({
-                'id': sec.id,
-                'name': sec.name
-            })
-        data_map[course.id] = section_list
+    from resource_management.models import Classroom
+    classrooms = Classroom.objects.filter(is_available=True, room_type__in=['CLASSROOM', 'LAB'])
 
     if request.method == 'POST':
         course_id = request.POST.get('course')
         section_id = request.POST.get('section')
         date = request.POST.get('date')
         slot_number = request.POST.get('slot_number')
+        classroom_id = request.POST.get('classroom')
         
         course = get_object_or_404(Course, id=course_id, faculty=request.user)
         section = get_object_or_404(Section, id=section_id) if section_id else None
+        classroom = get_object_or_404(Classroom, id=classroom_id) if classroom_id else None
         
         RemedialSession.objects.create(
             course=course,
@@ -41,6 +32,7 @@ def faculty_remedial(request):
             faculty=request.user,
             date=date,
             slot_number=slot_number,
+            classroom=classroom,
             status='PENDING'
         )
         messages.success(request, f"Remedial class for {course.name} ({section.name if section else 'No Section'}) Slot {slot_number} proposed. Pending Admin Approval.")
@@ -49,6 +41,7 @@ def faculty_remedial(request):
     return render(request, 'remedial_classes/faculty_dashboard.html', {
         'sessions': sessions,
         'courses': courses,
+        'classrooms': classrooms,
         'data_map_json': data_map
     })
 

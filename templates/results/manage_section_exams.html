@@ -54,6 +54,9 @@
                                 class="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">
                                 Max Marks</th>
                             <th
+                                class="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest text-center">
+                                Schedule & Room</th>
+                            <th
                                 class="px-10 py-6 text-[11px] font-black text-slate-400 uppercase tracking-widest text-right">
                                 Action</th>
                         </tr>
@@ -82,6 +85,24 @@
                                     class="font-mono text-xs font-black text-slate-600 dark:!text-slate-300 bg-slate-100 dark:!bg-slate-700 px-3 py-1 rounded-lg border border-slate-200 dark:!border-slate-600">
                                     {{ exam.max_marks }}
                                 </span>
+                            </td>
+                            <td class="px-10 py-6 text-center">
+                                <div class="flex flex-col items-center gap-1">
+                                    <span class="text-xs font-bold text-slate-600 dark:text-slate-300">
+                                        {{ exam.date|date:"M d, Y"|default:"Date TBD" }}
+                                    </span>
+                                    {% if exam.classroom %}
+                                    <span
+                                        class="text-[10px] font-black text-indigo-500 uppercase tracking-wider bg-indigo-50 dark:bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-100 dark:border-indigo-500/20">
+                                        📍 {{ exam.classroom.block.name }}-{{ exam.classroom.room_number }}
+                                    </span>
+                                    {% else %}
+                                    <span
+                                        class="text-[10px] font-black text-rose-400 uppercase tracking-wider bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-100 dark:border-rose-500/20">
+                                        Room TBD
+                                    </span>
+                                    {% endif %}
+                                </div>
                             </td>
                             <td class="px-10 py-6 text-right">
                                 <a href="{% url 'manage_exam_marks' course.id section.id exam.id %}"
@@ -124,6 +145,23 @@
                                 <span class="text-[10px] font-black text-indigo-500 uppercase tracking-widest">
                                     Max Marks: {{ exam.max_marks }}
                                 </span>
+                                <div class="mt-2 flex flex-wrap gap-2">
+                                    <span
+                                        class="text-[9px] font-black text-slate-400 uppercase tracking-widest border border-slate-200 dark:border-slate-700 px-2 py-0.5 rounded-md">
+                                        📅 {{ exam.date|date:"M d, Y"|default:"TBD" }}
+                                    </span>
+                                    {% if exam.classroom %}
+                                    <span
+                                        class="text-[9px] font-black text-blue-500 uppercase tracking-widest bg-blue-50 dark:bg-blue-500/10 px-2 py-0.5 rounded-md">
+                                        📍 {{ exam.classroom.block.name }}-{{ exam.classroom.room_number }}
+                                    </span>
+                                    {% else %}
+                                    <span
+                                        class="text-[9px] font-black text-rose-400 uppercase tracking-widest bg-rose-50 dark:bg-rose-500/10 px-2 py-0.5 rounded-md">
+                                        Room: TBD
+                                    </span>
+                                    {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
