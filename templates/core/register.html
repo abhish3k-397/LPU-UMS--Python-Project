@@ -5,62 +5,54 @@
     <div class="col-md-8 col-lg-6">
         <div class="card shadow-sm border-0 dark:bg-gray-800 dark:border-gray-700">
             <div class="card-body p-4">
-                <h3 class="text-center mb-4 font-bold text-gray-900 dark:text-white">Register for LPU(UMS)</h3>
+                <h3 class="text-center mb-4 font-bold text-gray-900 dark:text-white">Admission Application</h3>
+                <p class="text-center text-sm text-gray-500 mb-4 pb-2 border-b border-gray-100 dark:border-gray-700">
+                    Submit your details to enter the LPU Admissions Funnel.</p>
 
                 <form method="post">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
 
                     <div class="mb-3">
-                        <label class="form-label dark:text-gray-300">Username</label>
-                        {{ form.username }}
-                        {% if form.username.errors %}<div class="text-danger small">{{ form.username.errors }}</div>{%
-                        endif %}
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label dark:text-gray-300">Email Address</label>
-                        {{ form.email }}
-                        {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors }}</div>{% endif
-                        %}
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label dark:text-gray-300">Role</label>
-                        {{ form.role }}
-                        <div class="form-text dark:text-gray-400">Select Student or Faculty. Admins can only be created
-                            via the superuser portal.</div>
-                        {% if form.role.errors %}<div class="text-danger small">{{ form.role.errors }}</div>{% endif %}
+                        <label class="form-label dark:text-gray-300">Full Name</label>
+                        {{ form.student_name }}
+                        {% if form.student_name.errors %}<div class="text-danger small">{{ form.student_name.errors }}
+                        </div>{% endif %}
                     </div>
 
                     <div class="row mb-3">
                         <div class="col-6">
-                            <label class="form-label dark:text-gray-300">Password</label>
-                            {{ form.password }}
-                            {% if form.password.errors %}<div class="text-danger small">{{ form.password.errors }}</div>
-                            {% endif %}
+                            <label class="form-label dark:text-gray-300">Email Address</label>
+                            {{ form.email }}
+                            {% if form.email.errors %}<div class="text-danger small">{{ form.email.errors }}</div>{%
+                            endif %}
                         </div>
                         <div class="col-6">
-                            <label class="form-label dark:text-gray-300">Confirm Password</label>
-                            {{ form.confirm_password }}
-                            {% if form.confirm_password.errors %}
-                            <div class="text-danger small">
-                                {{ form.confirm_password.errors }}
-                            </div>
-                            {% endif %}
+                            <label class="form-label dark:text-gray-300">Phone</label>
+                            {{ form.phone }}
+                            {% if form.phone.errors %}<div class="text-danger small">{{ form.phone.errors }}</div>{%
+                            endif %}
                         </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label dark:text-gray-300">Course Applying For</label>
+                        {{ form.course_applied }}
+                        {% if form.course_applied.errors %}<div class="text-danger small">{{ form.course_applied.errors
+                            }}</div>{% endif %}
                     </div>
 
                     <div class="d-grid mt-4">
                         <button type="submit"
-                            class="btn btn-success bg-green-600 border-green-600 hover:bg-green-700">Submit
-                            Registration</button>
+                            class="btn btn-success bg-gradient-to-r from-rose-500 to-pink-600 border-none shadow-md shadow-rose-500/30 hover:shadow-lg hover:-translate-y-0.5 transition-all text-white font-bold">
+                            Submit Application
+                        </button>
                     </div>
                 </form>
 
                 <div class="text-center mt-3">
-                    <p class="text-sm dark:text-gray-400">Already have an account? <a href="{% url 'login' %}"
-                            class="text-primary hover:underline">Login here</a></p>
+                    <p class="text-sm dark:text-gray-400">Already a student/faculty? <a href="{% url 'login' %}"
+                            class="text-primary hover:underline font-bold">Login here</a></p>
                 </div>
             </div>
         </div>

@@ -25,6 +25,7 @@ class TimetableSlot(models.Model):
     slot_number = models.IntegerField(help_text="Slot 1-7 (e.g. 9AM to 4PM)")
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='slots')
     section = models.ForeignKey(Section, on_delete=models.CASCADE, related_name='timetable')
+    classroom = models.ForeignKey('resource_management.Classroom', on_delete=models.SET_NULL, null=True, blank=True, related_name='timetable_slots')
 
     @property
     def time_range(self):

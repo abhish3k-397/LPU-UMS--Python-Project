@@ -1,110 +1,251 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container py-4">
-    <div class="row mb-4">
-        <div class="col-12">
-            <h2 class="h3 font-bold text-gray-800 dark:text-white">Stall Admin Dashboard</h2>
-            <p class="text-gray-600 dark:text-gray-400">Manage incoming orders and monitor peak times.</p>
-        </div>
+<!-- Animated Background Elements -->
+<div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+    <div
+        class="absolute top-[10%] -left-[10%] w-[40%] h-[40%] rounded-full bg-orange-500/20 dark:bg-orange-600/20 blur-[120px] animate-[pulse_8s_ease-in-out_infinite]">
     </div>
+    <div
+        class="absolute bottom-[10%] -right-[10%] w-[50%] h-[50%] rounded-full bg-yellow-500/20 dark:bg-yellow-600/20 blur-[100px] animate-[pulse_10s_ease-in-out_infinite_alternate]">
+    </div>
+</div>
 
-    <!-- Peak Demand Widget -->
-    <div class="row mb-4">
-        <div class="col-12">
+<div class="container mx-auto px-4 py-8 max-w-7xl">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+        <div>
             <div
-                class="card shadow-sm border-0 border-start border-warning border-4 dark:bg-gray-800 dark:border-gray-700">
-                <div class="card-body">
-                    <h5 class="card-title font-bold text-warning mb-3">🔥 Peak Demand Predicted</h5>
-                    <div class="d-flex flex-wrap gap-3">
-                        {% for peak in peak_times|slice:":3" %}
-                        <div
-                            class="px-3 py-2 bg-warning bg-opacity-10 dark:bg-opacity-20 text-warning rounded text-sm font-semibold border border-warning shadow-sm">
-                            {{ peak.time_slot__start_time|time:"g:i A" }} - {{ peak.time_slot__end_time|time:"g:i A" }}
-                            <span class="badge bg-warning text-dark ms-2">{{ peak.order_count }} Orders</span>
-                        </div>
-                        {% empty %}
-                        <div class="text-muted dark:text-gray-400 text-sm">No data yet to predict peak times.</div>
-                        {% endfor %}
-                    </div>
-                </div>
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-orange-50/80 dark:bg-orange-900/30 backdrop-blur-md border border-orange-200/50 dark:border-orange-700/50 text-sm font-bold text-orange-600 dark:text-orange-400 mb-4 shadow-sm">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                LIVE DASHBOARD
+            </div>
+            <h1 class="text-5xl md:text-6xl font-black text-slate-900 dark:text-white mb-2 tracking-tight">
+                Stall <span
+                    class="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-amber-500">Command</span>
+            </h1>
+            <p class="text-lg text-slate-600 dark:text-slate-400 font-medium">Manage incoming tickets, track peak hours,
+                and keep the kitchen roaring.</p>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div
+                class="px-6 py-4 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl rounded-2xl border border-white/50 dark:border-slate-700/50 shadow-xl text-center transform hover:-translate-y-1 transition-transform">
+                <div class="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1">Today's
+                    Volume</div>
+                <div class="text-4xl font-black text-slate-800 dark:text-white">{{ today_orders.count }} <span
+                        class="text-lg text-slate-400">Orders</span></div>
             </div>
         </div>
     </div>
 
-    <!-- Orders Table -->
-    <div class="card shadow-sm border-0 dark:bg-gray-800 dark:border-gray-700 overflow-hidden">
+    <!-- Peak Demand Widget -->
+    <div class="relative group mb-10">
         <div
-            class="card-header bg-white dark:bg-gray-800 border-bottom dark:border-gray-700 py-3 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 font-semibold dark:text-white">Today's Orders Status</h5>
-            <span class="badge bg-primary">{{ today_orders.count }} Total</span>
+            class="absolute -inset-1 bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-1000">
         </div>
-        <div class="table-responsive">
-            <table class="table table-hover mb-0 dark:table-dark align-middle">
-                <thead class="bg-gray-50 dark:bg-gray-700">
-                    <tr>
+        <div
+            class="relative bg-white/60 dark:bg-slate-900/60 backdrop-blur-2xl rounded-3xl p-8 border border-white/50 dark:border-slate-700/50 shadow-2xl">
+            <div class="flex items-center gap-3 mb-6">
+                <div
+                    class="p-3 bg-amber-100 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400 rounded-xl shadow-inner border border-amber-200/50 dark:border-amber-500/20">
+                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-black text-slate-800 dark:text-white m-0">Peak Demand Radar</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {% for peak in peak_times|slice:":3" %}
+                <div
+                    class="flex flex-col p-5 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-slate-800 dark:to-slate-800/80 rounded-2xl border border-amber-100 dark:border-slate-700 shadow-sm transform hover:scale-105 transition-all">
+                    <span class="text-amber-600 dark:text-amber-400 font-black text-xl mb-1 tracking-tight">
+                        {{ peak.time_slot__start_time|time:"g:i A" }} - {{ peak.time_slot__end_time|time:"g:i A" }}
+                    </span>
+                    <div class="flex items-center gap-2 mt-auto">
+                        <span
+                            class="px-3 py-1 bg-orange-500 text-white text-xs font-bold rounded-lg uppercase tracking-wider shadow-md shadow-orange-500/30">
+                            {{ peak.order_count }} Orders expected
+                        </span>
+                        <div class="w-2 h-2 rounded-full bg-orange-500 animate-pulse"></div>
+                    </div>
+                </div>
+                {% empty %}
+                <div
+                    class="col-span-3 flex flex-col items-center justify-center p-8 bg-slate-50/50 dark:bg-slate-800/50 rounded-2xl border border-dashed border-slate-300 dark:border-slate-600">
+                    <p class="text-slate-500 dark:text-slate-400 font-medium text-lg">Insufficient data to predict peak
+                        hours yet. Gathering telemetry...</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Orders Queue -->
+    <div
+        class="bg-white/70 dark:bg-slate-900/80 backdrop-blur-2xl rounded-[2.5rem] overflow-hidden border border-white/50 dark:border-slate-700/50 shadow-2xl">
+        <div
+            class="p-8 border-b border-slate-200/50 dark:border-slate-700/50 flex flex-col sm:flex-row justify-between items-center gap-6 bg-slate-50/50 dark:bg-slate-800/50">
+            <div class="flex items-center gap-4">
+                <div
+                    class="w-14 h-14 bg-gradient-to-br from-slate-700 to-slate-900 dark:from-slate-600 dark:to-slate-800 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-slate-900/20 transform -rotate-3 transition-transform">
+                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-black text-slate-800 dark:text-white m-0">Live Ticket Queue</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0 mt-1">Real-time order
+                        processing</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse whitespace-nowrap">
+                <thead>
+                    <tr
+                        class="bg-slate-50/80 dark:bg-slate-800/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-700/50">
                         <th
-                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
-                            # ID</th>
+                            class="py-5 px-8 text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                            Ticket ID</th>
                         <th
-                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
-                            Student</th>
+                            class="py-5 px-8 text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                            Patron</th>
                         <th
-                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
-                            Item</th>
+                            class="py-5 px-8 text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                            Order Details</th>
                         <th
-                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
+                            class="py-5 px-8 text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
                             Time Slot</th>
                         <th
-                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
-                            Total</th>
+                            class="py-5 px-8 text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                            Revenue</th>
                         <th
-                            class="py-3 px-4 text-xs font-semibold tracking-wider uppercase text-gray-500 dark:text-gray-300">
-                            Update Status</th>
+                            class="py-5 px-8 text-xs font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest text-right">
+                            Action / Status</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                <tbody class="divide-y divide-slate-100/50 dark:divide-slate-700/50">
                     {% for order in today_orders %}
-                    <tr class="dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50">
-                        <td class="py-3 px-4 dark:text-gray-300">#{{ order.id }}</td>
-                        <td class="py-3 px-4 dark:text-gray-300">{{ order.student.username }}</td>
-                        <td class="py-3 px-4 dark:text-gray-300">
-                            <ul class="list-unstyled mb-0 small">
+                    <tr class="hover:bg-orange-50/30 dark:hover:bg-slate-800/40 transition-all duration-200 group">
+                        <td class="py-6 px-8">
+                            <span
+                                class="font-black text-slate-800 dark:text-white bg-slate-100 dark:bg-slate-700/50 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-600 shadow-sm">
+                                #{{ order.id|stringformat:"04d" }}
+                            </span>
+                        </td>
+                        <td class="py-6 px-8">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 flex items-center justify-center font-bold text-xs ring-2 ring-white dark:ring-slate-800">
+                                    {{ order.student.username|make_list|first|upper }}
+                                </div>
+                                <!-- prettier-ignore -->
+                                <span class="font-bold text-slate-700 dark:text-slate-200">
+                                    {{ order.student.username }}</span>
+                            </div>
+                        </td>
+                        <td class="py-6 px-8">
+                            <div class="flex flex-col gap-1.5">
                                 {% for item in order.items.all %}
-                                <li><strong>{{ item.quantity }}x</strong> {{ item.item.name }}</li>
+                                <div class="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                                    <span
+                                        class="inline-flex items-center justify-center w-5 h-5 rounded bg-slate-200 dark:bg-slate-700 font-bold text-[10px] text-slate-700 dark:text-slate-300">
+                                        {{ item.quantity }}x
+                                    </span>
+                                    <span class="font-bold">{{ item.item.name }}</span>
+                                </div>
                                 {% endfor %}
-                            </ul>
+                            </div>
                         </td>
-                        <td class="py-3 px-4 dark:text-gray-300">
-                            <span class="badge bg-secondary">{{ order.time_slot.start_time|time:"g:i A" }}</span>
+                        <td class="py-6 px-8">
+                            <span
+                                class="px-3 py-1.5 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-black rounded-xl uppercase tracking-wider border border-blue-200 dark:border-blue-500/20 shadow-sm flex items-center gap-2 w-max">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                {{ order.time_slot.start_time|time:"g:i A" }}
+                            </span>
                         </td>
-                        <td class="py-3 px-4 dark:text-gray-300 font-bold">₹{{ order.total_price }}</td>
-                        <td class="py-3 px-4">
-                            <form method="post" class="d-flex gap-2">
+                        <td class="py-6 px-8">
+                            <!-- prettier-ignore -->
+                            <span class="text-emerald-600 dark:text-emerald-400 font-black text-lg">
+                                ₹{{ order.total_price }}</span>
+                        </td>
+                        <td class="py-6 px-8 text-right">
+                            <form method="post" class="flex items-center justify-end gap-2 m-0 relative z-10">
                                 {% csrf_token %}
                                 <input type="hidden" name="order_id" value="{{ order.id }}">
-                                <select name="status"
-                                    class="form-select form-select-sm w-auto dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                                    {% for status_code, status_label in status_choices %}
-                                    <option value="{{ status_code }}" {% if order.status==status_code %}selected{% endif
-                                        %}>
-                                        {{ status_label }}
-                                    </option>
-                                    {% endfor %}
-                                </select>
-                                <button type="submit" class="btn btn-sm btn-outline-primary">Update</button>
+                                <div class="relative">
+                                    <select name="status"
+                                        class="appearance-none bg-white/50 dark:bg-slate-800/50 backdrop-blur-md border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 text-sm font-bold rounded-xl pl-4 pr-10 py-2 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 shadow-sm transition-all focus:outline-none cursor-pointer hover:border-amber-400 dark:hover:border-amber-500">
+                                        {% for status_code, status_label in status_choices %}
+                                        {% if order.status in status_code %}
+                                        <option value="{{ status_code }}" selected class="bg-white dark:bg-slate-800">
+                                            {{ status_label }}</option>
+                                        {% else %}
+                                        <option value="{{ status_code }}" class="bg-white dark:bg-slate-800">
+                                            {{ status_label }}</option>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                    <div
+                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-amber-500 dark:text-amber-400">
+                                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <button type="submit"
+                                    class="p-2 bg-slate-800 hover:bg-slate-900 text-white dark:bg-slate-700 dark:hover:bg-slate-600 rounded-xl transition-all shadow-md group-hover:shadow-lg focus:ring-2 focus:ring-offset-2 focus:ring-slate-900 border-none">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                            d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </button>
                             </form>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" class="text-center py-5 text-muted dark:text-gray-400">
-                            No orders placed today.
+                        <td colspan="6" class="py-24 text-center">
+                            <div class="flex flex-col items-center justify-center">
+                                <div
+                                    class="w-24 h-24 mb-6 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center shadow-inner border border-slate-200 dark:border-slate-700 pointer-events-none">
+                                    <svg class="w-12 h-12 text-slate-400 opacity-50" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                            d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                                    </svg>
+                                </div>
+                                <h5 class="text-2xl font-black text-slate-800 dark:text-white mb-2">No Active Tickets
+                                </h5>
+                                <p class="text-slate-500 dark:text-slate-400 font-medium max-w-sm">The kitchen is clear.
+                                    Waiting for orders to roll in...</p>
+                            </div>
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
+        </div>
+
+        <!-- Footer area -->
+        <div
+            class="px-8 py-5 border-t border-slate-200/50 dark:border-slate-700/50 bg-slate-50/30 dark:bg-slate-800/30 w-full text-right">
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">End of
+                Queue</span>
         </div>
     </div>
 </div>

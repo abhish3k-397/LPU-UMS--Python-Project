@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .models import CampusBlock, Classroom
+from .models import CampusBlock, Classroom, CampusResource
 from attendance.models import Course
 from django.db.models import Sum, Count
 from core.models import User
@@ -23,6 +23,15 @@ def resource_dashboard(request):
     if total_uni_capacity > 0:
         utilization_percentage = round((total_students / total_uni_capacity) * 100, 1)
 
+    # Resource Stats
+    total_resources = CampusResource.objects.count()
+    working_resources = CampusResource.objects.filter(status='WORKING').count()
+    maintenance_resources = CampusResource.objects.filter(status='MAINTENANCE').count()
+    broken_resources = CampusResource.objects.filter(status='BROKEN').count()
+    
+    # Room Type Breakdown
+    room_types = Classroom.objects.values('room_type').annotate(count=Count('id'))
+    
     # Faculty Workload Distribution
     faculties = User.objects.filter(role='FACULTY', is_approved=True).annotate(
         course_count=Count('course')
@@ -47,5 +56,10 @@ def resource_dashboard(request):
         'total_uni_capacity': total_uni_capacity,
         'total_students': total_students,
         'utilization_percentage': utilization_percentage,
-        'workload_data': workload_data
+        'workload_data': workload_data,
+        'total_resources': total_resources,
+        'working_resources': working_resources,
+        'maintenance_resources': maintenance_resources,
+        'broken_resources': broken_resources,
+        'room_types': room_types,
     })

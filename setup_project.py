@@ -16,6 +16,11 @@ from food_ordering.models import FoodItem, TimeSlot, OrderGroup, OrderItem
 from results.models import SemesterResult, CourseGrade, Exam as ResultExam, StudentExamMark
 from exams.models import Exam
 from django.core.files.base import ContentFile
+from resource_management.models import CampusBlock, Classroom
+from food_ordering.models import FoodItem, TimeSlot, OrderGroup, OrderItem
+from results.models import SemesterResult, CourseGrade, Exam as ResultExam, StudentExamMark
+from exams.models import Exam
+from django.core.files.base import ContentFile
 
 def generate_uid(role):
     if role == 'STUDENT':
@@ -56,11 +61,41 @@ def setup_project():
     Exam.objects.all().delete()
     SemesterResult.objects.all().delete()
 
-    print("1. Creating Sections...")
+    print("1. Creating Campus Infrastructure (10 Blocks, 900 Classrooms)...")
+    CampusBlock.objects.all().delete()
+    Classroom.objects.all().delete()
+    blocks = []
+    for i in range(1, 11):
+        blocks.append(CampusBlock(name=f"Block {i}", description=f"Academic Block {i}"))
+    CampusBlock.objects.bulk_create(blocks)
+    
+    saved_blocks = CampusBlock.objects.all().order_by('id')
+    classrooms_to_create = []
+    
+    for block in saved_blocks:
+        block_num = int(block.name.split()[1])
+        # 9 floors, 10 rooms per floor => 1-101 to 9-110, etc. Wait, 1-101 to 1-110, then 2-101? No, 101, 102... 910
+        # user said: "1-101 , 1-102 , like that 10 classes in one floor upto 110 and then 1-201 1-202 untill 210 then until 1-910 like that until 10-910"
+        for floor in range(1, 10): # 1 to 9
+            for room in range(1, 11): # 1 to 10
+                room_txt = f"{floor}{room:02d}" # 101, 102
+                room_number = f"{block_num}-{room_txt}"
+                classrooms_to_create.append(Classroom(
+                    block=block,
+                    room_number=room_number,
+                    capacity=60,
+                    room_type='CLASSROOM'
+                ))
+    Classroom.objects.bulk_create(classrooms_to_create)
+    print(f"Created {len(classrooms_to_create)} classrooms.")
+    
+    all_classrooms = list(Classroom.objects.all())
+
+    print("2. Creating Sections...")
     section_names = ['K23RT', 'K23PT', 'K23HG']
     sections = [Section.objects.create(name=name) for name in section_names]
 
-    print("2. Creating 5 Faculties...")
+    print("3. Creating 5 Faculties...")
     faculty_names = ["Gauth", "Sandhya", "Ramesh", "Kavita", "Suresh"]
     faculties = []
     for name in faculty_names:
@@ -76,7 +111,7 @@ def setup_project():
         faculty.save()
         faculties.append(faculty)
 
-    print("3. Creating 30 Students (10 per section)...")
+    print("4. Creating 30 Students (10 per section)...")
     student_base_names = [
         "Aarav", "Ishani", "Vihaan", "Advika", "Reyansh", "Myra", "Siddharth", "Ananya", "Kabir", "Zara",
         "Rohan", "Sanya", "Arjun", "Kritika", "Dhruv", "Riya", "Aryan", "Pooja", "Kartik", "Sneha",
@@ -101,7 +136,7 @@ def setup_project():
         student.save()
         students.append(student)
 
-    print("4. Creating 5 Current Courses (Semester 4)...")
+    print("5. Creating 5 Current Courses (Semester 4)...")
     current_course_data = [
         ("Artificial Intelligence", "CSE401"),
         ("Mobile App Development", "CSE402"),
@@ -121,10 +156,11 @@ def setup_project():
         course.students.set(students)
         courses.append(course)
 
-    print("5. Generating Timetable (60 slots total)...")
+    print("6. Generating Timetable (60 slots total) with Classrooms...")
     days = ['MON', 'TUE', 'WED', 'THU', 'FRI']
     activity_map = {} # (day, slot_number) -> set of course_ids (to avoid faculty clashes)
-
+    
+    # Assign a specific block to a section for their "home" classes, or just pick randomly
     for section in sections:
         course_slots_count = {course.id: 0 for course in courses}
         for day in days:
@@ -142,18 +178,21 @@ def setup_project():
                             activity_map[key] = set()
                         
                         if course.id not in activity_map[key]:
+                            # Assign a random classroom from the 900 available
+                            assigned_classroom = random.choice(all_classrooms)
                             TimetableSlot.objects.create(
                                 day_of_week=day,
                                 slot_number=slot_num,
                                 course=course,
-                                section=section
+                                section=section,
+                                classroom=assigned_classroom
                             )
                             activity_map[key].add(course.id)
                             course_slots_count[course.id] += 1
                             slots_for_today += 1
                             break
 
-    print("6. Creating Attendance Data (Past 3 days)...")
+    print("7. Creating Attendance Data (Past 3 days)...")
     today = timezone.now().date()
     for course in courses:
         for d in range(1, 4):

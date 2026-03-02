@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'remedial_classes',
     'exams',
     'results',
+    'admissions',
 ]
 
 AUTH_USER_MODEL = 'core.User'

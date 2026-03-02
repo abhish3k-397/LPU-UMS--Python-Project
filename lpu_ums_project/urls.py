@@ -28,6 +28,7 @@ urlpatterns = [
     path('remedial/', include('remedial_classes.urls')),
     path('exams/', include('exams.urls')),
     path('results/', include('results.urls')),
+    path('admissions/', include('admissions.urls')),
 ]
 
 if settings.DEBUG:

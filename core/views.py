@@ -5,23 +5,12 @@ from django.contrib import messages
 from .models import User
 from django import forms
 
+from admissions.models import AdmissionApplication
+
 class RegistrationForm(forms.ModelForm):
-    password = forms.CharField(widget=forms.PasswordInput)
-    confirm_password = forms.CharField(widget=forms.PasswordInput)
-
     class Meta:
-        model = User
-        fields = ['username', 'email', 'role', 'password']
-
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get("password")
-        confirm_password = cleaned_data.get("confirm_password")
-
-        if password != confirm_password:
-            self.add_error('confirm_password', "Passwords do not match")
-        
-        return cleaned_data
+        model = AdmissionApplication
+        fields = ['student_name', 'email', 'phone', 'course_applied']
 
 def register_view(request):
     if request.user.is_authenticated:
@@ -30,13 +19,8 @@ def register_view(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
-            # Ensure users require admin approval
-            user.is_approved = False
-            user.is_active = False # Django won't let them login if is_active is False
-            user.save()
-            messages.success(request, 'Registration successful. Please wait for an Admin to approve your account.')
+            form.save()
+            messages.success(request, 'Application submitted successfully! Our admissions team will review it shortly.')
             return redirect('login')
     else:
         form = RegistrationForm()

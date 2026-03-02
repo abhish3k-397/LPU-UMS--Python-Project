@@ -189,6 +189,28 @@
                         administration portal.</p>
                 </div>
             </a>
+
+            <!-- Admission Management -->
+            <a href="{% url 'admissions_dashboard' %}"
+                class="group block no-underline relative overflow-hidden rounded-[2.5rem] bg-white dark:!bg-slate-900/50 p-8 shadow-xl shadow-rose-500/10 hover:shadow-rose-500/20 transition-all duration-300 hover:-translate-y-1 border-2 border-rose-600">
+                <div
+                    class="absolute -right-10 -bottom-10 opacity-5 transform group-hover:scale-110 transition-transform duration-500">
+                    <svg class="w-60 h-60 text-rose-600" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                            d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H15V7a5 5 0 00-5-5zM13 7a3 3 0 00-6 0v2h6V7z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="relative z-10 text-slate-800 dark:text-white">
+                    <div
+                        class="w-14 h-14 bg-rose-50 dark:bg-rose-500/10 rounded-2xl flex items-center justify-center text-3xl mb-12 shadow-inner border border-rose-100 dark:border-rose-500/20 group-hover:scale-110 transition-transform">
+                        🎟️
+                    </div>
+                    <h4 class="text-2xl font-black mb-1 tracking-tight">Admissions</h4>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm font-medium m-0">Manage student intake and
+                        queries.</p>
+                </div>
+            </a>
         </div>
     </div>
 
@@ -470,9 +492,17 @@
                             class="inline-block ml-2 px-2 py-0.5 bg-indigo-500/10 text-indigo-500 text-[9px] font-black rounded-lg uppercase tracking-[0.1em] border border-indigo-500/20">REMEDIAL</span>
                         {% endif %}
                     </h5>
-                    <p class="text-slate-400 font-bold text-sm mb-8">
+                    <p class="text-slate-400 font-bold text-sm mb-2">
                         Section: {{ slot.section.name|default:"General" }}
                     </p>
+                    {% if slot.classroom %}
+                    <p class="text-slate-500 font-bold text-xs mb-6 flex items-center gap-1">
+                        📍 <span class="uppercase tracking-wider">{{ slot.classroom.block.name }} - {{
+                            slot.classroom.room_number }}</span>
+                    </p>
+                    {% else %}
+                    <div class="mb-6"></div>
+                    {% endif %}
 
                     {% if slot.is_punched %}
                     <div
